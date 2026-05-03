@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: argocd-server
+  namespace: argocd
+  annotations:
+    # Optioneel: vertel MetalLB welk specifiek IP je wilt (moet in je pool zitten)
+    metallb.universe.tf/loadBalancerIPs: 10.10.99.9 
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: argocd-server
