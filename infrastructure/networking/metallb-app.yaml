@@ -16,12 +16,11 @@ spec:
     automated:
       prune: true
       selfHeal: true
-  ignoreDifferences:      # Verhuisd naar boven, zonder extra 'spec:' regel
+  ignoreDifferences:
   - group: metallb.io
     kind: BGPPeer
+    name: bgppeers.metallb.io # Specifiek voor dit object
+    managedFieldsManagers:
+    - kube-controller-manager
     jsonPointers:
-    - /metadata/annotations
-  - group: metallb.io
-    kind: IPAddressPool
-    jsonPointers:
-    - /metadata/annotations
+    - /metadata
