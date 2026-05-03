@@ -8,9 +8,9 @@ spec:
   source:
     repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
     targetRevision: HEAD
-    path: infrastructure
+    path: .        # VERANDER DIT VAN 'infrastructure' NAAR '.'
     directory:
-      recurse: true # Dit zorgt dat hij alle submappen pakt
+      recurse: true 
   destination:
     name: in-cluster
     namespace: argocd
