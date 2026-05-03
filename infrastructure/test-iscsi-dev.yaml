@@ -1,13 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: test-iscsi-dev
+  name: test-iscsi-dev # (en test-iscsi-prod voor de andere)
   namespace: argocd
 spec:
+  project: default  # <--- VOEG DEZE REGEL TOE
   source:
-    path: apps/test-iscsi/overlays/dev # Hier kies je de variant!
+    path: apps/test-iscsi/overlays/dev
     repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
     targetRevision: HEAD
   destination:
-    namespace: test-dev # Rollout in de dev namespace
+    namespace: test-dev
     server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
