@@ -16,3 +16,13 @@ spec:
     automated:
       prune: true
       selfHeal: true
+spec:
+  ignoreDifferences:
+  - group: metallb.io
+    kind: BGPPeer
+    jsonPointers:
+    - /metadata/annotations
+  - group: metallb.io
+    kind: IPAddressPool
+    jsonPointers:
+    - /metadata/annotations
