@@ -10,7 +10,7 @@ spec:
     repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
     targetRevision: HEAD
   destination:
-    namespace: test-dev
+    namespace: test-prod
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
