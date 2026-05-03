@@ -16,8 +16,7 @@ spec:
     automated:
       prune: true
       selfHeal: true
-spec:
-  ignoreDifferences:
+  ignoreDifferences:      # Verhuisd naar boven, zonder extra 'spec:' regel
   - group: metallb.io
     kind: BGPPeer
     jsonPointers:
