@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: test-iscsi-prod
+  namespace: argocd
+spec:
+  source:
+    path: apps/test-iscsi/overlays/prod # Hier kies je de variant!
+    repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
+    targetRevision: HEAD
+  destination:
+    namespace: test-prod # Rollout in de prod namespace
+    server: https://kubernetes.default.svc

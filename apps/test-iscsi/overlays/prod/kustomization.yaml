@@ -1,0 +1,10 @@
+resources:
+  - ../../base
+patches:
+  - target:
+      kind: PersistentVolumeClaim
+      name: iscsi-test-pvc
+    patch: |-
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: 2Gi
