@@ -17,10 +17,9 @@ spec:
       prune: true
       selfHeal: true
   ignoreDifferences:
-  - group: metallb.io
-    kind: BGPPeer
-    name: bgppeers.metallb.io # Specifiek voor dit object
-    managedFieldsManagers:
-    - kube-controller-manager
-    jsonPointers:
-    - /metadata
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: bgppeers.metallb.io
+      jsonPointers:
+        - /metadata/annotations
+        - /metadata/labels
