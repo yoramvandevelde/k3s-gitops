@@ -16,6 +16,8 @@ kind: Deployment
 metadata:
   name: storage-test
 spec:
+  strategy:
+    type: Recreate # In plaats van de standaard 'RollingUpdate'
   replicas: 1
   selector:
     matchLabels:
