@@ -17,33 +17,9 @@ spec:
         csiDriver:
           name: iscsi
         driver:
+          existingConfigSecret: democratic-csi-iscsi-config
           config:
             driver: freenas-api-iscsi
-            httpConnection:
-              protocol: http
-              host: 10.10.10.20
-              port: 80
-              apiKey: 1-SSYhDEAHJEeyX1ZT60TwOuAD537JMigon7LGZdv7aB9Cj2sjEV7sHNXKv0IAsapO
-              allowInsecure: true
-            iscsi:
-              targetPortal: "10.10.10.20:3260"
-              namePrefix: csi-
-              nameSuffix: "-clustera"
-              targetGroups:
-                - targetGroupPortalGroup: 1
-                  targetGroupInitiatorGroup: 2
-                  targetGroupAuthType: None
-                  targetGroupAuthGroup: null
-              extentInsecureTpc: true
-              extentXenCompat: false
-              extentDisablePhysicalBlocksize: true
-              extentAvailThreshold: 0
-              extentBlocksize: 512
-              extentRpm: SSD
-            zfs:
-              datasetParentName: hba-ssd/iscsi/v
-              detachedSnapshotsDatasetParentName: hba-ssd/iscsi/s
-              zvolEnableReservation: false
         storageClasses:
           - name: iscsi
             defaultClass: false
