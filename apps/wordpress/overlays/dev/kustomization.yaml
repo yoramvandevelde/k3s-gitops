@@ -4,3 +4,4 @@ namespace: wordpress-dev
 resources:
   - ../../base
   - sealed-secret.yaml
+  - sealed-ghcr-pull-secret.yaml

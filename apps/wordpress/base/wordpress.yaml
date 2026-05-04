@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: wordpress
-        image: wordpress:latest
+        image: ghcr.io/yoramvandevelde/wordpress-redis:latest        
         env:
         - name: WORDPRESS_DB_HOST
           value: mysql

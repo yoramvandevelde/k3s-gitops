@@ -4,6 +4,7 @@ namespace: wordpress-prod
 resources:
   - ../../base
   - sealed-secret.yaml
+  - sealed-ghcr-pull-secret.yaml
 patches:
   - target:
       kind: PersistentVolumeClaim
