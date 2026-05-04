@@ -4,6 +4,7 @@ namespace: test-prod # DIT IS DE KEY
 resources:
   - ../../base
 patches:
+  # Patch 1: De opslag vergroten
   - target:
       kind: PersistentVolumeClaim
       name: iscsi-test-pvc
@@ -11,3 +12,12 @@ patches:
       - op: replace
         path: /spec/resources/requests/storage
         value: 3Gi
+
+  # Patch 2: De hostnaam aanpassen
+  - target:
+      kind: Ingress
+      name: storage-test-ingress
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: storage-prod.local
