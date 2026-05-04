@@ -1,17 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: root
+  name: infrastructure
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
     targetRevision: HEAD
-    path: bootstrap
+    path: infrastructure
     directory:
-      recurse: false
-      include: "*.yaml"
+      recurse: true
   destination:
     name: in-cluster
     namespace: argocd
@@ -19,3 +18,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - SkipDryRunOnMissingResource=true
