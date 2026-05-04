@@ -10,7 +10,8 @@ spec:
     targetRevision: HEAD
     path: infrastructure
     directory:
-      recurse: false
+      recurse: true
+      include: "{*/*.yaml,*.yml,*.yaml}"  
   destination:
     name: in-cluster
     namespace: argocd
