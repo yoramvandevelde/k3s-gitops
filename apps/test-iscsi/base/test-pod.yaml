@@ -10,6 +10,7 @@ spec:
       storage: 1Gi
   storageClassName: iscsi # Check of dit exact de naam is van je StorageClass
 ---
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,10 +31,23 @@ spec:
         volumeMounts:
         - mountPath: "/usr/share/nginx/html"
           name: my-storage
+        # VOEG DIT STUKJE TOE ONDER VOLUME MOUNTS:
+        env:
+        - name: TEST_USER
+          valueFrom:
+            secretKeyRef:
+              name: opslag-wachtwoord  # De 'name' uit de metadata van je SealedSecret
+              key: username           # De 'key' die je in je geheim hebt gezet
+        - name: TEST_PASS
+          valueFrom:
+            secretKeyRef:
+              name: opslag-wachtwoord
+              key: password
       volumes:
       - name: my-storage
         persistentVolumeClaim:
           claimName: iscsi-test-pvc
+---
 ---
 apiVersion: v1
 kind: Service
