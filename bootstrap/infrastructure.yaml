@@ -10,7 +10,7 @@ spec:
     targetRevision: HEAD
     path: infrastructure
     directory:
-      recurse: true
+      recurse: false
   destination:
     name: in-cluster
     namespace: argocd
