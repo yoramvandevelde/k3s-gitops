@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: wordpress-dev
 resources:
   - ../../base
+  - sealed-secret.yaml

@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: wordpress-prod
 resources:
   - ../../base
+  - sealed-secret.yaml
 patches:
   - target:
       kind: PersistentVolumeClaim
