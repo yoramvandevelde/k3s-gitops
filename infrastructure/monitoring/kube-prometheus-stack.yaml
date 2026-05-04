@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 69.3.2
+    helm:
+      values: |
+        grafana:
+          service:
+            type: LoadBalancer
+            annotations:
+              metallb.universe.tf/loadBalancerIPs: 10.10.99.81
+        prometheus:
+          service:
+            type: LoadBalancer
+            annotations:
+              metallb.universe.tf/loadBalancerIPs: 10.10.99.82
+        alertmanager:
+          service:
+            type: LoadBalancer
+            annotations:
+              metallb.universe.tf/loadBalancerIPs: 10.10.99.83
+  destination:
+    name: in-cluster
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
