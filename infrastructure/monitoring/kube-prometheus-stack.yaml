@@ -20,6 +20,7 @@ spec:
             passwordKey: admin-password
           persistence:
             enabled: true
+            type: sts
             storageClassName: nfs
             size: 2Gi
           service:
