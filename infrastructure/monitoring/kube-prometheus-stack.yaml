@@ -18,11 +18,24 @@ spec:
             existingSecret: grafana-admin-secret
             userKey: admin-user
             passwordKey: admin-password
+          persistence:
+            enabled: true
+            storageClassName: nfs
+            size: 2Gi
           service:
             type: LoadBalancer
             annotations:
               metallb.universe.tf/loadBalancerIPs: 10.10.99.81
         prometheus:
+          prometheusSpec:
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: nfs
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 10Gi
           service:
             type: LoadBalancer
             annotations:
