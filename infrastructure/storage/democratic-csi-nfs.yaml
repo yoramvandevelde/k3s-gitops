@@ -30,7 +30,7 @@ spec:
               - noatime
               - nfsvers=3
               - nolock
-          parameters:
+            parameters:
               fsType: nfs
               detachedVolumesFromSnapshots: "false"
         volumeSnapshotClasses:
