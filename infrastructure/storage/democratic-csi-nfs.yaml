@@ -29,7 +29,8 @@ spec:
             mountOptions:
               - noatime
               - nfsvers=3
-            parameters:
+              - nolock
+          parameters:
               fsType: nfs
               detachedVolumesFromSnapshots: "false"
         volumeSnapshotClasses:
