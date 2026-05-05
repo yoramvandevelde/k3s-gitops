@@ -1,0 +1,46 @@
+ireplicaCount: 1
+
+persistence:
+  enabled: true
+  storageClass: iscsi
+  size: 10Gi
+
+gitea:
+  config:
+    server:
+      DOMAIN: git.local.sifft.io
+      ROOT_URL: https://git.local.sifft.io/
+      SSH_DOMAIN: git-ssh.sifft.io
+      SSH_PORT: 22
+      SSH_LISTEN_PORT: 2222
+      START_SSH_SERVER: true
+
+    database:
+      DB_TYPE: sqlite3
+
+    service:
+      DISABLE_REGISTRATION: true
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+
+  ssh:
+    type: LoadBalancer
+    port: 22
+    targetPort: 2222
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: 10.10.99.84
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: git.local.sifft.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
