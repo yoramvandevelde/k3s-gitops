@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: recipit
-        image: ghcr.io/yoramvandevelde/recipit:latest
+        image: ghcr.io/yoramvandevelde/recipit:5b3bd6bad76b3e3a8283f56a0eaa73a19288f42b
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
