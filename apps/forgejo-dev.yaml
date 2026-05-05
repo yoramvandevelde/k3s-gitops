@@ -9,7 +9,7 @@ spec:
   project: default
 
   sources:
-    - repoURL: https://forgejo-helm.mister-tee.de/
+    - repoURL: code.forgejo.org/forgejo-helm
       chart: forgejo
       targetRevision: 17.0.1
       helm:
