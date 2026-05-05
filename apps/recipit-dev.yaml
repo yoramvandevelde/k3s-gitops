@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: recipit # (en test-iscsi-prod voor de andere)
+  name: recipit-dev # (en test-iscsi-prod voor de andere)
   namespace: argocd
 spec:
   project: default  # <--- VOEG DEZE REGEL TOE
