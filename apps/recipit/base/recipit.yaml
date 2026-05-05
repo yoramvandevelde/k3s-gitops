@@ -38,6 +38,21 @@ spec:
         env:
         - name: DATABASE_PATH
           value: /srv/data/recepten.db
+        - name: ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: recipit-ha
+              key: admin_user
+        - name: ADMIN_PASSWORD_HASH
+          valueFrom:
+            secretKeyRef:
+              name: recipit-ha
+              key: admin_password
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: recipit-ha
+              key: secret_key
         - name: HA_URL
           valueFrom:
             secretKeyRef:
