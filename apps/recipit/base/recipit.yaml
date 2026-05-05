@@ -29,6 +29,7 @@ spec:
       containers:
       - name: recipit
         image: ghcr.io/yoramvandevelde/recipit:latest  # <- aanpassen
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
         volumeMounts:
