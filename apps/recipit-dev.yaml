@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: recipit-dev # (en test-iscsi-prod voor de andere)
+  name: recipit # (en test-iscsi-prod voor de andere)
   namespace: argocd
 spec:
   project: default  # <--- VOEG DEZE REGEL TOE
@@ -10,7 +10,7 @@ spec:
     repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
     targetRevision: HEAD
   destination:
-    namespace: recipit
+    namespace: recipit-dev
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
