@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: recipit-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: iscsi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipit-deploy
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recipit-deploy
+  template:
+    metadata:
+      labels:
+        app: recipit-deploy
+    spec:
+      containers:
+      - name: recipit
+        image: ghcr.io/yoramvandevelde/recipit:latest  # <- aanpassen
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - mountPath: /srv/data
+          name: recipit-storage
+        env:
+        - name: DATABASE_PATH
+          value: /srv/data/recepten.db
+        - name: HA_URL
+          valueFrom:
+            secretKeyRef:
+              name: recipit-ha
+              key: url
+        - name: HA_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: recipit-ha
+              key: token
+      volumes:
+      - name: recipit-storage
+        persistentVolumeClaim:
+          claimName: recipit-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recipit-svc
+spec:
+  selector:
+    app: recipit-deploy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
