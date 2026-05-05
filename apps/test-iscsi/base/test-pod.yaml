@@ -8,8 +8,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: iscsi # Check of dit exact de naam is van je StorageClass
----
+  storageClassName: iscsi 
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -17,7 +16,7 @@ metadata:
   name: storage-test
 spec:
   strategy:
-    type: Recreate # In plaats van de standaard 'RollingUpdate'
+    type: Recreate 
   replicas: 1
   selector:
     matchLabels:
@@ -33,13 +32,12 @@ spec:
         volumeMounts:
         - mountPath: "/usr/share/nginx/html"
           name: my-storage
-        # VOEG DIT STUKJE TOE ONDER VOLUME MOUNTS:
         env:
         - name: TEST_USER
           valueFrom:
             secretKeyRef:
-              name: opslag-wachtwoord  # De 'name' uit de metadata van je SealedSecret
-              key: username           # De 'key' die je in je geheim hebt gezet
+              name: opslag-wachtwoord  
+              key: username           
         - name: TEST_PASS
           valueFrom:
             secretKeyRef:
@@ -49,7 +47,6 @@ spec:
       - name: my-storage
         persistentVolumeClaim:
           claimName: iscsi-test-pvc
----
 ---
 apiVersion: v1
 kind: Service

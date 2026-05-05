@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: recipit # (en test-iscsi-prod voor de andere)
+  name: recipit 
   namespace: argocd
 spec:
-  project: default  # <--- VOEG DEZE REGEL TOE
+  project: default  
   source:
     path: apps/recipit/overlays/dev
     repoURL: https://github.com/yoramvandevelde/k3s-gitops.git

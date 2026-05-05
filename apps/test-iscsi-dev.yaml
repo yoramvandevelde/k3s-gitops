@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: test-iscsi-dev # (en test-iscsi-prod voor de andere)
+  name: test-iscsi-dev 
   namespace: argocd
 spec:
-  project: default  # <--- VOEG DEZE REGEL TOE
+  project: default  
   source:
     path: apps/test-iscsi/overlays/dev
     repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
@@ -17,4 +17,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true  # <--- DIT IS DE FIX
+      - CreateNamespace=true  
