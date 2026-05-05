@@ -1,4 +1,4 @@
-ireplicaCount: 1
+replicaCount: 1
 
 persistence:
   enabled: true
@@ -6,6 +6,10 @@ persistence:
   size: 10Gi
 
 gitea:
+  admin:
+    existingSecret: forgejo-admin-secret
+    passwordMode: initialOnlyRequireReset
+
   config:
     server:
       DOMAIN: git.local.sifft.io
@@ -38,9 +42,13 @@ ingress:
   className: nginx
   annotations:
     kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   hosts:
     - host: git.local.sifft.io
       paths:
         - path: /
           pathType: Prefix
-  tls: []
+  tls:
+    - hosts:
+        - git.local.sifft.io
+      secretName: forgejo-tls
