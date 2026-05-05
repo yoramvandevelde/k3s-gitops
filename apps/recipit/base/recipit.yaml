@@ -8,7 +8,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: iscsi 
+  storageClassName: iscsi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -16,7 +16,7 @@ metadata:
   name: recipit-deploy
 spec:
   strategy:
-    type: Recreate 
+    type: Recreate
   replicas: 1
   selector:
     matchLabels:
@@ -27,21 +27,25 @@ spec:
         app: recipit-deploy
     spec:
       containers:
-      - name: nginx
-        image: nginx
+      - name: recipit
+        image: ghcr.io/yoramvandevelde/recipit:latest  # <- aanpassen
+        ports:
+        - containerPort: 5000
         volumeMounts:
-        - mountPath: "/srv/recipit.db"
+        - mountPath: /srv/data
           name: recipit-storage
         env:
-        - name: TEST_USER
+        - name: DATABASE_PATH
+          value: /srv/data/recepten.db
+        - name: HA_URL
           valueFrom:
             secretKeyRef:
-              name: recipit-ha  
-              key: url 
-        - name: TEST_PASS
+              name: recipit-ha
+              key: url
+        - name: HA_TOKEN
           valueFrom:
             secretKeyRef:
-              name: recipit
+              name: recipit-ha
               key: token
       volumes:
       - name: recipit-storage
@@ -53,10 +57,9 @@ kind: Service
 metadata:
   name: recipit-svc
 spec:
-  type: LoadBalancer
   selector:
     app: recipit-deploy
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 5000
