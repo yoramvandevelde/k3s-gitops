@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: recipit # (en test-iscsi-prod voor de andere)
+  namespace: argocd
+spec:
+  project: default  # <--- VOEG DEZE REGEL TOE
+  source:
+    path: apps/recipit/overlays/dev
+    repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
+    targetRevision: HEAD
+  destination:
+    namespace: recipit
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true  

@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: recipit-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: iscsi 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipit-deploy
+spec:
+  strategy:
+    type: Recreate 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: recipit-deploy
+  template:
+    metadata:
+      labels:
+        app: recipit-deploy
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - mountPath: "/srv/recipit.db"
+          name: recipit-storage
+        env:
+        - name: TEST_USER
+          valueFrom:
+            secretKeyRef:
+              name: recipit-ha  
+              key: url 
+        - name: TEST_PASS
+          valueFrom:
+            secretKeyRef:
+              name: recipit
+              key: token
+      volumes:
+      - name: recipit-storage
+        persistentVolumeClaim:
+          claimName: recipit-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recipit-svc
+spec:
+  type: LoadBalancer
+  selector:
+    app: recipit-deploy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
