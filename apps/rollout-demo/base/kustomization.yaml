@@ -1,0 +1,3 @@
+# apps/rollout-demo/base/kustomization.yaml
+resources:
+  - rollout.yaml
