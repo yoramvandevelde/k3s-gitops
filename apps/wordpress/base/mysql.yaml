@@ -27,10 +27,11 @@ spec:
       - name: mysql
         image: mysql:8.0
         securityContext:
+          allowPrivilegeEscalation: false
+          runAsGroup: 999
           runAsNonRoot: true
           runAsUser: 999
-          runAsGroup: 999
-          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         resources:
           requests:
             cpu: 100m
@@ -57,12 +58,17 @@ spec:
               name: wordpress-secret
               key: mysql-password
         volumeMounts:
-        - name: mysql-storage
-          mountPath: /var/lib/mysql
+          - name: mysql-storage
+            mountPath: /var/lib/mysql
+          - name: mysql-tmp
+            mountPath: /tmp
       volumes:
-      - name: mysql-storage
-        persistentVolumeClaim:
-          claimName: mysql-pvc
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+        - name: mysql-tmp
+          emptyDir: {}
+
 ---
 apiVersion: v1
 kind: Service
