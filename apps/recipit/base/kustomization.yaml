@@ -3,3 +3,5 @@ resources:
   - ingress.yaml
   - sealed-secret.yaml
   - network-policy.yaml
+  - snapshot-cronjob.yaml
+  - snapshot-rbac.yaml

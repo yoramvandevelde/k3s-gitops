@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: recipit-snapshot
+spec:
+  schedule: "0 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: recipit-snapshot
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          containers:
+          - name: snapshot
+            image: bitnami/kubectl:1.32.4
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              privileged: false
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
+            volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl apply -f - <<EOF
+              apiVersion: snapshot.storage.k8s.io/v1
+              kind: VolumeSnapshot
+              metadata:
+                name: recipit-snapshot-$(date +%Y%m%d-%H%M)
+                namespace: recipit-dev
+              spec:
+                volumeSnapshotClassName: iscsi
+                source:
+                  persistentVolumeClaimName: recipit-pvc
+              EOF
+          volumes:
+          - name: tmp
+            emptyDir: {}
