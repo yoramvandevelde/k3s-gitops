@@ -1,0 +1,50 @@
+English Todo: Cluster Security & Governance Policies
+Important: Start everything in Audit mode first. Only move to Enforce after:
+
+Violations are resolved
+
+Exceptions are defined
+
+Understanding is built
+
+Phase 1: High Practical Value (Do these first)
+Enforce resource requests/limits – Prevents noisy neighbors, helps scheduler and stability (especially important for homelab clusters with limited resources)
+
+Block privileged containers – Set blocked: true for privileged: true (huge security win, except explicit CSI/storage exceptions)
+
+Restrict hostPath – Disallow hostPath except in infra namespaces (prevents direct host filesystem access)
+
+Require probes – Make liveness/readiness probes mandatory (prevents “Running but actually dead” scenarios)
+
+Phase 2: Security Hardening
+Require non-root execution – Enforce runAsNonRoot: true and allowPrivilegeEscalation: false
+
+Forbid :latest + enforce registry allowlist – Only allow:
+
+ghcr.io/yoramvandevelde/*
+
+registry.k8s.io/*
+
+Specific trusted vendors (prevents random Docker Hub garbage)
+
+Require pinned image tags – Stricter than no-latest: disallow mutable tags like stable, main, nightly
+
+Block NodePort services – Disallow NodePort except in explicit infra namespaces (forces Ingress/Gateway usage)
+
+Phase 3: Governance & Observability
+Enforce required labels – Examples:
+
+app.kubernetes.io/name
+
+app.kubernetes.io/part-of
+
+environment (helps observability significantly)
+
+Namespace protection – Prevent deploys in:
+
+kube-system
+
+argocd
+
+kyverno
+(except from infra repo/apps)
