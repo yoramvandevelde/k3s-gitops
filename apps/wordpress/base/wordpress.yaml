@@ -26,9 +26,6 @@ spec:
       containers:
       - name: wordpress
         image: ghcr.io/yoramvandevelde/wordpress-redis:1.0.0       
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
         resources:
           requests:
             cpu: 100m
