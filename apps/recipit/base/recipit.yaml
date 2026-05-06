@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: recipit
-        image: ghcr.io/yoramvandevelde/recipit:5381f80f043fe26d0f26af65c86a1048db34b6ae
+        image: ghcr.io/yoramvandevelde/recipit:43c35ecca34271ff5fa000bef872b19875eb247b
         imagePullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
