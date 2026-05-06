@@ -1,0 +1,5 @@
+ingress:
+  enabled: false
+
+config:
+  pluginsDir: /headlamp/plugins
