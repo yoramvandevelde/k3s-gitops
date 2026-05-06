@@ -17,7 +17,6 @@ spec:
         any:
           - resources:
               kinds:
-                - Pod
                 - Deployment
                 - StatefulSet
                 - DaemonSet
@@ -27,15 +26,19 @@ spec:
 
       validate:
         message: "Privileged containers are not allowed."
-        pattern:
-          spec:
-            =(securityContext):
-              =(privileged): "false"
-            =(template):
-              spec:
-                =(containers):
-                  - =(securityContext):
-                      =(privileged): "false"
-                =(initContainers):
-                  - =(securityContext):
-                      =(privileged): "false"
+        foreach:
+          - list: "request.object.spec.template.spec.containers"
+            deny:
+              conditions:
+                any:
+                  - key: "{{ element.securityContext.privileged || false }}"
+                    operator: Equals
+                    value: true
+
+          - list: "request.object.spec.template.spec.initContainers || `[]`"
+            deny:
+              conditions:
+                any:
+                  - key: "{{ element.securityContext.privileged || false }}"
+                    operator: Equals
+                    value: true
