@@ -44,6 +44,10 @@ spec:
         volumeMounts:
         - mountPath: "/usr/share/nginx/html"
           name: my-storage
+        - mountPath: /var/cache/nginx
+          name: nginx-cache
+        - mountPath: /var/run
+          name: nginx-run
         env:
         - name: TEST_USER
           valueFrom:
@@ -59,7 +63,8 @@ spec:
       - name: my-storage
         persistentVolumeClaim:
           claimName: iscsi-test-pvc
----
+
+            ---
 apiVersion: v1
 kind: Service
 metadata:
