@@ -13,18 +13,16 @@ spec:
       values: |
         webhooksCleanup:
           image:
-            repository: rancher/kubectl
-            tag: v1.30.2
+            repository: dtzar/helm-kubectl
+            tag: 3.15.4
 
         policyReportsCleanup:
           image:
-            repository: rancher/kubectl
-            tag: v1.30.2
-
+            repository: dtzar/helm-kubectl
+            tag: 3.15.4
   destination:
     name: in-cluster
     namespace: kyverno
-
   syncPolicy:
     automated:
       prune: true
