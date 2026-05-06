@@ -26,6 +26,11 @@ spec:
       containers:
       - name: mysql
         image: mysql:8.0
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
+          allowPrivilegeEscalation: false
         resources:
           requests:
             cpu: 100m
