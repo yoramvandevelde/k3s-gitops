@@ -16,10 +16,11 @@ spec:
       - name: redis
         image: redis:7-alpine
         securityContext:
+          allowPrivilegeEscalation: false
+          runAsGroup: 999
           runAsNonRoot: true
           runAsUser: 999
-          runAsGroup: 999
-          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         resources:
           requests:
             cpu: 50m
@@ -29,6 +30,16 @@ spec:
             memory: 256Mi
         ports:
         - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+        - name: redis-tmp
+          mountPath: /tmp
+      volumes:
+      - name: redis-data
+        emptyDir: {}
+      - name: redis-tmp
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
