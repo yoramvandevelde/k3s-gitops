@@ -15,7 +15,10 @@ spec:
         any:
           - resources:
               kinds:
-                - Pod
+                - Deployment
+                - StatefulSet
+                - DaemonSet
+                - Rollout
 
       validate:
         message: "Containers must define cpu/memory requests and limits."
