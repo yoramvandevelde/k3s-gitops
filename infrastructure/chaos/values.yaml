@@ -4,7 +4,7 @@ chaoskube:
     timezone: "Europe/Amsterdam"
     # Exclude system namespaces. To limit blast radius, add your own:
     # namespaces: "!kube-system,!argocd,!monitoring,!storage,!cert-manager"
-    namespaces: "!kube-system,!argocd,!monitoring,!storage,!cert-manager,!metallb-system"
+    namespaces: "!kube-system"
     # Exclude DaemonSets - these are usually node-level and shouldn't be killed
     kinds: "!DaemonSet"
     # Uncomment to disable dry-run and start actually killing pods:
