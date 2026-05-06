@@ -22,6 +22,12 @@ initContainers:
       cpu: 500m
       memory: 256Mi
 
+containerSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+
 gitea:
   admin:
     existingSecret: forgejo-admin-secret
