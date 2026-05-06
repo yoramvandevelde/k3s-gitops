@@ -27,69 +27,73 @@ spec:
         app: recipit-deploy
     spec:
       containers:
-      - name: recipit
-        image: ghcr.io/yoramvandevelde/recipit:11fceef1baab60937a325ec317fc4b2ae9b9ca70
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          readOnlyRootFilesystem: true
-        resources:
-          requests:
-            cpu: 50m
-            memory: 128Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-        ports:
-        - containerPort: 5000
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 10
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        volumeMounts:
-        - mountPath: /srv/data
-          name: recipit-storage
-        env:
-        - name: DATABASE_PATH
-          value: /srv/data/recepten.db
-        - name: ADMIN_USER
-          valueFrom:
-            secretKeyRef:
-              name: recipit-ha
-              key: admin_user
-        - name: ADMIN_PASSWORD_HASH
-          valueFrom:
-            secretKeyRef:
-              name: recipit-ha
-              key: admin_password
-        - name: SECRET_KEY
-          valueFrom:
-            secretKeyRef:
-              name: recipit-ha
-              key: secret_key
-        - name: HA_URL
-          valueFrom:
-            secretKeyRef:
-              name: recipit-ha
-              key: url
-        - name: HA_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: recipit-ha
-              key: token
+        - name: recipit
+          image: ghcr.io/yoramvandevelde/recipit:11fceef1baab60937a325ec317fc4b2ae9b9ca70
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: recipit-storage
+              mountPath: /srv/data
+            - name: recipit-tmp
+              mountPath: /tmp
+          env:
+            - name: DATABASE_PATH
+              value: /srv/data/recepten.db
+            - name: ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: recipit-ha
+                  key: admin_user
+            - name: ADMIN_PASSWORD_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: recipit-ha
+                  key: admin_password
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recipit-ha
+                  key: secret_key
+            - name: HA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: recipit-ha
+                  key: url
+            - name: HA_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: recipit-ha
+                  key: token
       volumes:
-      - name: recipit-storage
-        persistentVolumeClaim:
-          claimName: recipit-pvc
+        - name: recipit-storage
+          persistentVolumeClaim:
+            claimName: recipit-pvc
+        - name: recipit-tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
