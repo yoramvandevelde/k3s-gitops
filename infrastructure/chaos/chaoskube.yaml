@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chaoskube
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://linki.github.io/chaoskube
+      chart: chaoskube
+      targetRevision: 0.22.0  # verify: helm repo add chaoskube https://linki.github.io/chaoskube && helm search repo chaoskube
+      helm:
+        valueFiles:
+          - $values/infrastructure/chaos/values.yaml
+    - repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    name: in-cluster
+    namespace: chaoskube
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

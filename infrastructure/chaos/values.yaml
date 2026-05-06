@@ -1,0 +1,19 @@
+# Set dryRun: true to observe without killing pods
+dryRun: true
+
+interval: 10m
+
+# Timezone for excluded time windows
+timezone: Europe/Amsterdam
+
+# Exclude namespaces here to limit blast radius quickly.
+# Example: "kube-system,argocd,monitoring"
+# Empty string = target all namespaces
+namespaces: ""
+
+# Exclude pods matching these labels (e.g. "app=critical")
+labels: ""
+
+# Excluded time windows - chaoskube won't kill pods during these times
+excludedWeekdays: ""
+excludedTimesOfDay: ""
