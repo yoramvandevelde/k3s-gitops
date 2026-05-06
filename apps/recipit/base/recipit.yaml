@@ -31,8 +31,9 @@ spec:
         image: ghcr.io/yoramvandevelde/recipit:11fceef1baab60937a325ec317fc4b2ae9b9ca70
         imagePullPolicy: IfNotPresent
         securityContext:
+          allowPrivilegeEscalation: false
           runAsNonRoot: true
-          allowPrivilegeEscalation: false        
+          readOnlyRootFilesystem: true
         resources:
           requests:
             cpu: 50m
