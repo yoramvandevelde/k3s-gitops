@@ -7,10 +7,12 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
+
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
     targetRevision: 69.3.2
+
     helm:
       values: |
         grafana:
@@ -29,6 +31,17 @@ spec:
             type: LoadBalancer
             annotations:
               metallb.universe.tf/loadBalancerIPs: 10.10.99.81
+
+          initChownData:
+            enabled: true
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              seccompProfile:
+                type: RuntimeDefault
 
           containerSecurityContext:
             allowPrivilegeEscalation: false
@@ -55,10 +68,12 @@ spec:
               volumeClaimTemplate:
                 spec:
                   storageClassName: nfs
-                  accessModes: ["ReadWriteOnce"]
+                  accessModes:
+                    - ReadWriteOnce
                   resources:
                     requests:
                       storage: 10Gi
+
           service:
             type: LoadBalancer
             annotations:
@@ -78,6 +93,7 @@ spec:
     automated:
       prune: true
       selfHeal: true
+
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
