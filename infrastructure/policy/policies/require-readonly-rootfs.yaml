@@ -25,7 +25,9 @@ spec:
           - resources:
               namespaces:
                 - ingress-nginx
-      
+                - kube-system
+                - storage
+                - metallb-system
       validate:
         allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."
