@@ -15,6 +15,11 @@ spec:
       containers:
       - name: redis
         image: redis:7-alpine
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
+          allowPrivilegeEscalation: false
         resources:
           requests:
             cpu: 50m
