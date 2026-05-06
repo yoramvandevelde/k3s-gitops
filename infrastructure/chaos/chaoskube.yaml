@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: https://linki.github.io/chaoskube
       chart: chaoskube
-      targetRevision: 0.22.0  # verify: helm repo add chaoskube https://linki.github.io/chaoskube && helm search repo chaoskube
+      targetRevision: 0.38.0  
       helm:
         valueFiles:
           - $values/infrastructure/chaos/values.yaml
