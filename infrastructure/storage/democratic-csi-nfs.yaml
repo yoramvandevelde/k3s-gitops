@@ -7,42 +7,66 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
+
   source:
     repoURL: https://democratic-csi.github.io/charts/
     chart: democratic-csi
     targetRevision: 0.15.1
+
     helm:
       releaseName: nfs
+
       values: |
         csiDriver:
           name: nfs
+
+        controller:
+          driver:
+            image:
+              registry: ghcr.io/democratic-csi/democratic-csi
+              tag: v1.9.3
+
+        node:
+          driver:
+            image:
+              registry: ghcr.io/democratic-csi/democratic-csi
+              tag: v1.9.3
+
         driver:
           existingConfigSecret: democratic-csi-nfs-config
+
           config:
             driver: freenas-api-nfs
+
         storageClasses:
           - name: nfs
             defaultClass: false
             reclaimPolicy: Delete
             volumeBindingMode: Immediate
             allowVolumeExpansion: true
+
             mountOptions:
               - noatime
               - nfsvers=3
               - nolock
+
             parameters:
               fsType: nfs
               detachedVolumesFromSnapshots: "false"
+
         volumeSnapshotClasses:
           - name: nfs
             parameters:
               detachedSnapshots: "true"
+
   destination:
     name: in-cluster
     namespace: storage
+
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+
     syncOptions:
       - CreateNamespace=true
