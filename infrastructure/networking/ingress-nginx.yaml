@@ -14,10 +14,8 @@ spec:
         controller:
           service:
             annotations:
+              # Kies een IP dat nog vrij is in je 10.10.99.x pool
               metallb.universe.tf/loadBalancerIPs: 10.10.99.80
-          admissionWebhooks:
-            patch:
-              enabled: false
   destination:
     name: in-cluster
     namespace: ingress-nginx
