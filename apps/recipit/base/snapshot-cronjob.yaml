@@ -46,7 +46,9 @@ spec:
                 source:
                   persistentVolumeClaimName: recipit-pvc
               EOF
-              kubectl apply -f /tmp/snapshot.yaml
+              echo "Applying snapshot:"
+              cat /tmp/snapshot.yaml
+              kubectl apply -f /tmp/snapshot.yaml && echo "Success" || echo "Failed"
           volumes:
           - name: tmp
             emptyDir: {}
