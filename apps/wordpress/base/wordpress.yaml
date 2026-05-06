@@ -24,46 +24,59 @@ spec:
         app: wordpress
     spec:
       containers:
-      - name: wordpress
-        image: ghcr.io/yoramvandevelde/wordpress-redis:1.0.1       
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 33
-          allowPrivilegeEscalation: false        
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 1000m
-            memory: 1Gi
-        env:
-        - name: WORDPRESS_DB_HOST
-          value: mysql
-        - name: WORDPRESS_DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: mysql-user
-        - name: WORDPRESS_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: wordpress-secret
-              key: mysql-password
-        - name: WORDPRESS_DB_NAME
-          value: wordpress
-        - name: WORDPRESS_REDIS_HOST
-          value: redis
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - name: wordpress-storage
-          mountPath: /var/www/html
+        - name: wordpress
+          image: ghcr.io/yoramvandevelde/wordpress-redis:1.0.1
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 33
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          env:
+            - name: WORDPRESS_DB_HOST
+              value: mysql
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secret
+                  key: mysql-user
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wordpress-secret
+                  key: mysql-password
+            - name: WORDPRESS_DB_NAME
+              value: wordpress
+            - name: WORDPRESS_REDIS_HOST
+              value: redis
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: wordpress-storage
+              mountPath: /var/www/html
+            - name: wordpress-tmp
+              mountPath: /tmp
+            - name: apache-run
+              mountPath: /var/run/apache2
+            - name: apache-lock
+              mountPath: /var/lock/apache2
       volumes:
-      - name: wordpress-storage
-        persistentVolumeClaim:
-          claimName: wordpress-pvc
+        - name: wordpress-storage
+          persistentVolumeClaim:
+            claimName: wordpress-pvc
+        - name: wordpress-tmp
+          emptyDir: {}
+        - name: apache-run
+          emptyDir: {}
+        - name: apache-lock
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
@@ -73,5 +86,5 @@ spec:
   selector:
     app: wordpress
   ports:
-  - port: 80
-    targetPort: 80
+    - port: 80
+      targetPort: 80
