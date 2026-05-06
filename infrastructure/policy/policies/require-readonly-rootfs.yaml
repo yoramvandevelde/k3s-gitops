@@ -22,6 +22,7 @@ spec:
                 - Rollout
 
       validate:
+        allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."
 
         foreach:
