@@ -30,6 +30,9 @@ spec:
       - name: recipit
         image: ghcr.io/yoramvandevelde/recipit:5381f80f043fe26d0f26af65c86a1048db34b6ae
         imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false        
         resources:
           requests:
             cpu: 50m
