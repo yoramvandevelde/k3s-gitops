@@ -1,19 +1,11 @@
-# Set dryRun: true to observe without killing pods
-dryRun: true
-
-interval: 10m
-
-# Timezone for excluded time windows
-timezone: Europe/Amsterdam
-
-# Exclude namespaces here to limit blast radius quickly.
-# Example: "kube-system,argocd,monitoring"
-# Empty string = target all namespaces
-namespaces: ""
-
-# Exclude pods matching these labels (e.g. "app=critical")
-labels: ""
-
-# Excluded time windows - chaoskube won't kill pods during these times
-excludedWeekdays: ""
-excludedTimesOfDay: ""
+chaoskube:
+  args:
+    interval: "10m"
+    timezone: "Europe/Amsterdam"
+    # Exclude system namespaces. To limit blast radius, add your own:
+    # namespaces: "!kube-system,!argocd,!monitoring,!storage,!cert-manager"
+    namespaces: "!kube-system,!argocd,!monitoring,!storage,!cert-manager,!metallb-system"
+    # Exclude DaemonSets - these are usually node-level and shouldn't be killed
+    kinds: "!DaemonSet"
+    # Uncomment to disable dry-run and start actually killing pods:
+    no-dry-run: ""
