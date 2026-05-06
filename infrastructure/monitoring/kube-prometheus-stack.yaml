@@ -40,24 +40,14 @@ spec:
               type: RuntimeDefault
 
           sidecar:
-            dashboards:
-              containerSecurityContext:
-                allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: true
-                capabilities:
-                  drop:
-                    - ALL
-                seccompProfile:
-                  type: RuntimeDefault
-            datasources:
-              containerSecurityContext:
-                allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: true
-                capabilities:
-                  drop:
-                    - ALL
-                seccompProfile:
-                  type: RuntimeDefault
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+              seccompProfile:
+                type: RuntimeDefault
 
         prometheus:
           prometheusSpec:
