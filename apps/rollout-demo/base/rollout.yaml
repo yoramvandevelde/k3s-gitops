@@ -1,13 +1,17 @@
 # apps/rollout-demo/base/rollout.yaml
+
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: rollout-demo
+
 spec:
   replicas: 2
+
   selector:
     matchLabels:
       app: rollout-demo
+
   strategy:
     canary:
       steps:
@@ -15,21 +19,26 @@ spec:
         - pause:
             duration: 30s
         - setWeight: 100
+
   template:
     metadata:
       labels:
         app: rollout-demo
+
     spec:
       containers:
         - name: nginx
           image: nginx:1.28.0-alpine
+
           securityContext:
             runAsNonRoot: true
             runAsUser: 101
             runAsGroup: 101
-            allowPrivilegeEscalation: false          
+            allowPrivilegeEscalation: false
+
           ports:
             - containerPort: 80
+
           resources:
             requests:
               cpu: 25m
@@ -37,3 +46,17 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
+
+          volumeMounts:
+            - mountPath: /var/cache/nginx
+              name: nginx-cache
+
+            - mountPath: /var/run
+              name: nginx-run
+
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+
+        - name: nginx-run
+          emptyDir: {}
