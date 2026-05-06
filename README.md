@@ -2,32 +2,46 @@
 
 Personal homelab GitOps setup running on k3s. This is an experiment to learn GitOps patterns — not a production setup. The goal is to be able to tear down the cluster and have everything back up within half an hour.
 
-## What's in here
-
 This repo manages the full cluster state via ArgoCD using an app-of-apps pattern. Everything except the initial ArgoCD bootstrap and secrets is managed through Git.
 
 **Infrastructure**
-- [cert-manager](https://cert-manager.io) — TLS certificates via Let's Encrypt + Cloudflare DNS
+- [cert-manager](https://cert-manager.io) — TLS certificates via Let's Encrypt + Cloudflare DNS challenge
 - [ingress-nginx](https://kubernetes.github.io/ingress-nginx) — ingress controller
-- [MetalLB](https://metallb.universe.tf) — bare metal load balancer
+- [MetalLB](https://metallb.universe.tf) — bare metal load balancer (L2, pool `10.10.99.1–10.10.99.250`)
+- [Cilium](https://cilium.io) — CNI with Hubble for network observability and CiliumNetworkPolicy enforcement
 - [democratic-csi](https://github.com/democratic-csi/democratic-csi) — iSCSI and NFS storage via TrueNAS
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) — encrypted secrets safe to store in Git
-- [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) — monitoring
+- [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) — monitoring (Prometheus + Grafana + Alertmanager)
 - [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) — volume snapshots
+- [Kyverno](https://kyverno.io) — policy engine, all policies enforced (see below)
+- [Argo Rollouts](https://argoproj.github.io/rollouts/) — progressive delivery (canary deployments)
+- [chaoskube](https://github.com/linki/chaoskube) — chaos engineering, random pod termination every 10 minutes
 
 **Apps**
-- [Forgejo](https://forgejo.org) — self-hosted Git
-- [Wordpress](https://wordpress.org) — dev and prod environments
-- [Recipit](https://github.com/yoramvandevelde/recipit) — personal recipe manager, includes a full CI/CD pipeline that automatically updates the image tag in this repo on push
+- [Forgejo](https://forgejo.org) — self-hosted Git (SQLite, iSCSI storage, SSH via MetalLB)
+- [Headlamp](https://headlamp.dev) — Kubernetes web UI
+- [Wordpress](https://wordpress.org) — dev and prod environments (MySQL + Redis + custom image with Redis plugin)
+- [Recipit](https://github.com/yoramvandevelde/recipit) — personal recipe manager with Home Assistant integration; full CI/CD pipeline that automatically updates the image tag in this repo on push
 
 ## Structure
-
-```
+```bash
 bootstrap/        # ArgoCD root app and app-of-apps entrypoints
-infrastructure/   # Cluster infrastructure (networking, storage, monitoring, etc.)
+infrastructure/   # Cluster infrastructure (networking, storage, monitoring, policy, etc.)
 apps/             # Application deployments with kustomize base/overlay structure
 config/           # Public sealed secrets cert and encrypted master key
 ```
+
+## Security
+
+All workloads are hardened and comply with the following Kyverno policies (all in Enforce mode):
+
+- `disallow-latest-tag` — image tags must be pinned
+- `require-resource-requests-limits` — all containers must define CPU/memory requests and limits
+- `block-privileged-containers` — privileged containers are blocked (exceptions: Cilium and democratic-csi node drivers)
+- `require-non-root` — containers must run with `runAsNonRoot: true`
+- `require-readonly-rootfs` — containers must set `readOnlyRootFilesystem: true` (exceptions: `ingress-nginx`, `kube-system`, `storage`, `metallb-system`)
+
+All application namespaces have CiliumNetworkPolicy with default-deny and explicit allow rules per workload.
 
 ## Secrets
 
