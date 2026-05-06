@@ -22,8 +22,25 @@ spec:
                 - DaemonSet
                 - Rollout
 
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - argocd
+                - kyverno
+                - kube-system
+                - cert-manager
+                - ingress-nginx
+                - metallb-system
+                - monitoring
+                - storage
+                - argo-rollouts
+                - headlamp
+                - chaoskube
+
       validate:
         message: "Containers must define cpu/memory requests and limits."
+
         foreach:
           - list: "request.object.spec.template.spec.containers"
             deny:
@@ -32,12 +49,15 @@ spec:
                   - key: "{{ element.resources.requests.cpu || '' }}"
                     operator: Equals
                     value: ""
+
                   - key: "{{ element.resources.requests.memory || '' }}"
                     operator: Equals
                     value: ""
+
                   - key: "{{ element.resources.limits.cpu || '' }}"
                     operator: Equals
                     value: ""
+
                   - key: "{{ element.resources.limits.memory || '' }}"
                     operator: Equals
                     value: ""
@@ -49,12 +69,15 @@ spec:
                   - key: "{{ element.resources.requests.cpu || '' }}"
                     operator: Equals
                     value: ""
+
                   - key: "{{ element.resources.requests.memory || '' }}"
                     operator: Equals
                     value: ""
+
                   - key: "{{ element.resources.limits.cpu || '' }}"
                     operator: Equals
                     value: ""
+
                   - key: "{{ element.resources.limits.memory || '' }}"
                     operator: Equals
                     value: ""
