@@ -1,14 +1,3 @@
-ingress:
-  enabled: false
-
-config:
-  pluginsDir: /headlamp/plugins
-
-podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 100
-  runAsGroup: 101
-
 securityContext:
   privileged: false
   allowPrivilegeEscalation: false
