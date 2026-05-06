@@ -18,15 +18,47 @@ spec:
             existingSecret: grafana-admin-secret
             userKey: admin-user
             passwordKey: admin-password
+
           persistence:
             enabled: true
             type: sts
             storageClassName: nfs
             size: 2Gi
+
           service:
             type: LoadBalancer
             annotations:
               metallb.universe.tf/loadBalancerIPs: 10.10.99.81
+
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
+          sidecar:
+            dashboards:
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+                seccompProfile:
+                  type: RuntimeDefault
+            datasources:
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+                seccompProfile:
+                  type: RuntimeDefault
+
         prometheus:
           prometheusSpec:
             storageSpec:
@@ -41,14 +73,17 @@ spec:
             type: LoadBalancer
             annotations:
               metallb.universe.tf/loadBalancerIPs: 10.10.99.82
+
         alertmanager:
           service:
             type: LoadBalancer
             annotations:
               metallb.universe.tf/loadBalancerIPs: 10.10.99.83
+
   destination:
     name: in-cluster
     namespace: monitoring
+
   syncPolicy:
     automated:
       prune: true
