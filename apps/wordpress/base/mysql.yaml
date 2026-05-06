@@ -62,13 +62,16 @@ spec:
             mountPath: /var/lib/mysql
           - name: mysql-tmp
             mountPath: /tmp
+          - name: mysql-run
+            mountPath: /var/run/mysqld
       volumes:
         - name: mysql-storage
           persistentVolumeClaim:
             claimName: mysql-pvc
         - name: mysql-tmp
           emptyDir: {}
-
+        - name: mysql-run
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
