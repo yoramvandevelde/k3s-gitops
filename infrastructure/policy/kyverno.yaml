@@ -11,14 +11,20 @@ spec:
     targetRevision: 3.3.7
     helm:
       values: |
-        cleanupJobs:
-          admissionReports:
-            enabled: false
-          clusterAdmissionReports:
-            enabled: false
+        webhooksCleanup:
+          image:
+            repository: rancher/kubectl
+            tag: v1.30.2
+
+        policyReportsCleanup:
+          image:
+            repository: rancher/kubectl
+            tag: v1.30.2
+
   destination:
     name: in-cluster
     namespace: kyverno
+
   syncPolicy:
     automated:
       prune: true
