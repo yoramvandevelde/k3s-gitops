@@ -29,12 +29,8 @@ spec:
               protocol: TCP
   egress:
     # kube-apiserver
-    - toCIDR:
-        - 10.43.0.1/32
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
+    - toEntities:
+        - kube-apiserver
     # kube-dns
     - toEndpoints:
         - matchLabels:
