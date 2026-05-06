@@ -11,6 +11,8 @@ spec:
 
   rules:
     - name: require-cpu-memory-requests-limits
+      skipBackgroundRequests: false
+
       match:
         any:
           - resources:
@@ -23,7 +25,7 @@ spec:
       validate:
         message: "Containers must define cpu/memory requests and limits."
         foreach:
-          - list: "request.object.spec.containers"
+          - list: "request.object.spec.template.spec.containers"
             deny:
               conditions:
                 any:
@@ -40,7 +42,7 @@ spec:
                     operator: Equals
                     value: ""
 
-          - list: "request.object.spec.initContainers || `[]`"
+          - list: "request.object.spec.template.spec.initContainers || `[]`"
             deny:
               conditions:
                 any:
