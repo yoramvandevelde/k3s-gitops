@@ -23,6 +23,14 @@ spec:
                 - CronJob
                 - Rollout
 
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - kube-system
+                - storage
+                - metallb-system
+
       validate:
         message: "Containers must run with runAsNonRoot=true."
 
