@@ -9,7 +9,7 @@ spec:
   admission: true
 
   rules:
-    - name: require-readonly-root-filesystem
+    - name: require-readonly-rootfs
       skipBackgroundRequests: false
 
       match:
