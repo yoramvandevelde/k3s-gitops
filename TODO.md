@@ -1,0 +1,55 @@
+# TODO
+
+Things to explore next. Ordered roughly by how self-contained they are, not by priority.
+
+---
+
+## Cilium Service Mesh
+
+Cilium is already running but only used for network policies. Cilium can act as a full service mesh without sidecars — mTLS between services, traffic splitting, and L7 observability, all powered by eBPF instead of injected proxies.
+
+- Enable Cilium's service mesh mode (`kubeProxyReplacement`, `envoy` sidecarless mode)
+- Configure mTLS between app namespaces
+- Explore traffic splitting via `CiliumEnvoyConfig` or `CiliumClusterwideEnvoyConfig`
+- Observe it all in Hubble
+
+**Why:** No Istio complexity, no sidecars, and you already have the CNI. This is what eBPF-based networking actually looks like in practice.
+
+---
+
+## External Secrets Operator
+
+Sealed Secrets works, but secrets still live in Git (encrypted). External Secrets Operator flips the model: secrets live in a real secret store and are synced into Kubernetes at runtime. Nothing secret ever touches the repo.
+
+- Deploy [External Secrets Operator](https://external-secrets.io)
+- Set up a backend — HashiCorp Vault is the most educational, but a simple option is running [Infisical](https://infisical.com) or using an existing cloud secret manager
+- Migrate one app (Recipit or Forgejo) off Sealed Secrets as a proof of concept
+- Compare the operational model: rotation, auditing, access control vs. the Sealed Secrets approach
+
+**Why:** Different philosophy entirely. Understanding both models is valuable for real-world work.
+
+---
+
+## OpenTofu for Infrastructure
+
+The cluster state is in Git, but everything underneath it — the VM(s), TrueNAS datasets, network config — is still manual. OpenTofu (open-source Terraform fork) can manage that layer too.
+
+- [TrueNAS provider](https://registry.terraform.io/providers/dariusbakunas/truenas) for datasets, shares, and storage pools
+- Proxmox/Harvester/whatever hypervisor you run has providers too
+- k3s can be provisioned via cloud-init or an existing module
+- Goal: `tofu apply` builds the full stack from scratch, then `kubectl apply -f bootstrap/root.yaml` does the rest
+
+**Why:** This closes the last manual gap. Real infrastructure-as-code end to end.
+
+---
+
+## Tetragon — eBPF Security Observability
+
+Also from Cilium. Tetragon hooks into the Linux kernel via eBPF and gives you real-time visibility into what containers are actually doing: syscalls, process executions, network connections, file access — at the kernel level, not the application level.
+
+- Deploy [Tetragon](https://tetragon.io) into the cluster
+- Write a `TracingPolicy` to observe a specific app (e.g. what files Recipit touches, what processes Wordpress spawns)
+- Watch what chaoskube actually does when it kills a pod at the syscall level
+- Optional: hook Tetragon alerts into Alertmanager
+
+**Why:** This is genuinely eye-opening. Most people have never seen what a container does below the container runtime. eBPF makes the invisible visible.
