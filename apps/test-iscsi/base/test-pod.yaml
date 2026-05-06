@@ -29,6 +29,11 @@ spec:
       containers:
       - name: nginx
         image: nginx
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+          runAsGroup: 101
+          allowPrivilegeEscalation: false
         resources:
           requests:
             cpu: 25m
