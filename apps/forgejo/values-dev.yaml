@@ -13,6 +13,15 @@ resources:
     cpu: 1000m
     memory: 1Gi
 
+initContainers:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
 gitea:
   admin:
     existingSecret: forgejo-admin-secret
