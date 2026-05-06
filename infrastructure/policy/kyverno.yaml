@@ -9,6 +9,13 @@ spec:
     repoURL: https://kyverno.github.io/kyverno/
     chart: kyverno
     targetRevision: 3.3.7
+    helm:
+      values: |
+        cleanupJobs:
+          admissionReports:
+            enabled: false
+          clusterAdmissionReports:
+            enabled: false
   destination:
     name: in-cluster
     namespace: kyverno
