@@ -22,21 +22,21 @@ spec:
                 - Rollout
 
       validate:
-        message: "Containers must use readOnlyRootFilesystem."
+        message: "Containers must set securityContext.readOnlyRootFilesystem to true."
 
         foreach:
           - list: "request.object.spec.template.spec.containers"
             deny:
               conditions:
                 any:
-                  - key: "{{ element.securityContext.readOnlyRootFilesystem || false }}"
-                    operator: Equals
-                    value: false
+                  - key: "{{ element.securityContext.readOnlyRootFilesystem || `false` }}"
+                    operator: NotEquals
+                    value: true
 
           - list: "request.object.spec.template.spec.initContainers || `[]`"
             deny:
               conditions:
                 any:
-                  - key: "{{ element.securityContext.readOnlyRootFilesystem || false }}"
-                    operator: Equals
-                    value: false
+                  - key: "{{ element.securityContext.readOnlyRootFilesystem || `false` }}"
+                    operator: NotEquals
+                    value: true
