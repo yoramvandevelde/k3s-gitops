@@ -35,7 +35,7 @@ spec:
               set -x
               printf 'apiVersion: snapshot.storage.k8s.io/v1\nkind: VolumeSnapshot\nmetadata:\n  name: recipit-snapshot-%s\n  namespace: recipit-dev\nspec:\n  volumeSnapshotClassName: iscsi\n  source:\n    persistentVolumeClaimName: recipit-pvc\n' "$(date +%Y%m%d-%H%M)" > /tmp/snapshot.yaml
               cat /tmp/snapshot.yaml
-              kubectl apply -f /tmp/snapshot.yaml && echo "Success" || echo "Failed"
+              kubectl apply -f /tmp/snapshot.yaml 2>&1 && echo "Success" || echo "Failed"
             volumeMounts:
             - name: tmp
               mountPath: /tmp
