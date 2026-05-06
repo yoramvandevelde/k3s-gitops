@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: recipit-snapshot-cleanup
+spec:
+  schedule: "30 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: recipit-snapshot
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          containers:
+          - name: cleanup
+            image: bitnami/kubectl:1.32.4
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              privileged: false
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
+            volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl get volumesnapshot -n recipit-dev --no-headers -o custom-columns="NAME:.metadata.name,CREATED:.metadata.creationTimestamp" | \
+              while read name created; do
+                age=$(( ( $(date +%s) - $(date -d "$created" +%s) ) / 86400 ))
+                if [ "$age" -gt 7 ]; then
+                  echo "Deleting $name (age: $age days)"
+                  kubectl delete volumesnapshot "$name" -n recipit-dev
+                fi
+              done
+          volumes:
+          - name: tmp
+            emptyDir: {}
