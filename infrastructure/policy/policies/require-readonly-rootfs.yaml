@@ -10,6 +10,8 @@ spec:
 
   rules:
     - name: require-readonly-root-filesystem
+      skipBackgroundRequests: false
+
       match:
         any:
           - resources:
@@ -23,7 +25,7 @@ spec:
         message: "Containers must use readOnlyRootFilesystem."
 
         foreach:
-          - list: "request.object.spec.containers"
+          - list: "request.object.spec.template.spec.containers"
             deny:
               conditions:
                 any:
@@ -31,7 +33,7 @@ spec:
                     operator: Equals
                     value: false
 
-          - list: "request.object.spec.initContainers || `[]`"
+          - list: "request.object.spec.template.spec.initContainers || `[]`"
             deny:
               conditions:
                 any:
