@@ -63,8 +63,12 @@ spec:
       - name: my-storage
         persistentVolumeClaim:
           claimName: iscsi-test-pvc
+      - name: nginx-cache
+        emptyDir: {}
+      - name: nginx-run
+        emptyDir: {}
 
-            ---
+---
 apiVersion: v1
 kind: Service
 metadata:
