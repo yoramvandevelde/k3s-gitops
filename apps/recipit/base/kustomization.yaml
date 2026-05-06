@@ -4,4 +4,5 @@ resources:
   - sealed-secret.yaml
   - network-policy.yaml
   - snapshot-cronjob.yaml
+  - snapshot-cleanup-cronjob.yaml
   - snapshot-rbac.yaml
