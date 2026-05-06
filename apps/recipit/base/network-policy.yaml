@@ -1,0 +1,49 @@
+# Default deny all ingress and egress for the entire namespace
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+# Recipit: ingress from ingress-nginx, egress to Home Assistant and kube-dns
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: recipit
+spec:
+  endpointSelector:
+    matchLabels:
+      app: recipit-deploy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ingress-nginx
+            io.kubernetes.pod.namespace: ingress-nginx
+      toPorts:
+        - ports:
+            - port: "5000"
+              protocol: TCP
+  egress:
+    # Home Assistant
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "8123"
+              protocol: TCP
+    # kube-dns
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
