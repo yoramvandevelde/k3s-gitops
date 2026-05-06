@@ -1,0 +1,126 @@
+
+# Default deny all ingress and egress for the entire namespace
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+# WordPress: ingress from ingress-nginx, egress to mysql, redis, kube-dns, world:443
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: wordpress
+spec:
+  endpointSelector:
+    matchLabels:
+      app: wordpress
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ingress-nginx
+            io.kubernetes.pod.namespace: ingress-nginx
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+  egress:
+    # MySQL
+    - toEndpoints:
+        - matchLabels:
+            app: mysql
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP
+    # Redis
+    - toEndpoints:
+        - matchLabels:
+            app: redis
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    # kube-dns
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # Internet egress for WordPress updates/plugin checks
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+# MySQL: ingress only from wordpress
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mysql
+spec:
+  endpointSelector:
+    matchLabels:
+      app: mysql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: wordpress
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP
+  egress:
+    # kube-dns
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+---
+# Redis: ingress only from wordpress
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis
+spec:
+  endpointSelector:
+    matchLabels:
+      app: redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: wordpress
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+  egress:
+    # kube-dns
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
