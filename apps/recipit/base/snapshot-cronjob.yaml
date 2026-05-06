@@ -31,11 +31,11 @@ spec:
             volumeMounts:
             - name: tmp
               mountPath: /tmp
-            command:
+          command:
             - /bin/sh
             - -c
             - |
-              kubectl apply -f - <<EOF
+              cat > /tmp/snapshot.yaml << EOF
               apiVersion: snapshot.storage.k8s.io/v1
               kind: VolumeSnapshot
               metadata:
@@ -46,6 +46,7 @@ spec:
                 source:
                   persistentVolumeClaimName: recipit-pvc
               EOF
+              kubectl apply -f /tmp/snapshot.yaml
           volumes:
           - name: tmp
             emptyDir: {}
