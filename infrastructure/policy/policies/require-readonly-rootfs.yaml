@@ -20,7 +20,12 @@ spec:
                 - StatefulSet
                 - DaemonSet
                 - Rollout
-
+      exclude:
+        any:
+          - resources:
+              namespaces:
+                - ingress-nginx
+      
       validate:
         allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."
