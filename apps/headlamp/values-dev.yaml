@@ -13,3 +13,15 @@ securityContext:
   privileged: false
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
+
+volumes:
+  - name: headlamp-config
+    emptyDir: {}
+  - name: headlamp-tmp
+    emptyDir: {}
+
+volumeMounts:
+  - name: headlamp-config
+    mountPath: /home/headlamp/.config
+  - name: headlamp-tmp
+    mountPath: /tmp
