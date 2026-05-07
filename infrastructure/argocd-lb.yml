@@ -4,8 +4,8 @@ metadata:
   name: argocd-server
   namespace: argocd
   annotations:
-    # Optioneel: vertel MetalLB welk specifiek IP je wilt (moet in je pool zitten)
-    metallb.universe.tf/loadBalancerIPs: 10.10.99.9 
+    # Request a specific IP from MetalLB (must be within the pool range)
+    metallb.universe.tf/loadBalancerIPs: 10.10.99.9
 spec:
   type: LoadBalancer
   ports:
