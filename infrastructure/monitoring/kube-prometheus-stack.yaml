@@ -93,7 +93,11 @@ spec:
     automated:
       prune: true
       selfHeal: true
-
     syncOptions:
-      - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /status/terminatingReplicas
