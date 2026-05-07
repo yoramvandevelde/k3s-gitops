@@ -9,61 +9,49 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
-
   source:
     repoURL: https://democratic-csi.github.io/charts/
     chart: democratic-csi
     targetRevision: 0.15.1
-
     helm:
       releaseName: iscsi
-
       values: |
         csiDriver:
           name: iscsi
-
         controller:
           driver:
             image:
               registry: ghcr.io/democratic-csi/democratic-csi
               tag: v1.9.3
-
         node:
           driver:
             image:
               registry: ghcr.io/democratic-csi/democratic-csi
               tag: v1.9.3
-
+          iscsiDirHostPathType: ""
         driver:
           existingConfigSecret: democratic-csi-iscsi-config
-
           config:
             driver: freenas-api-iscsi
-
         storageClasses:
           - name: iscsi
             defaultClass: false
             reclaimPolicy: Delete
             volumeBindingMode: Immediate
             allowVolumeExpansion: true
-
             parameters:
               fsType: ext4
               detachedVolumesFromSnapshots: "false"
-
         volumeSnapshotClasses:
           - name: iscsi
             parameters:
               detachedSnapshots: "true"
-
   destination:
     name: in-cluster
     namespace: storage
-
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-
     syncOptions:
       - CreateNamespace=true
