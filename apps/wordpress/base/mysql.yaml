@@ -24,6 +24,8 @@ spec:
       labels:
         app: mysql
     spec:
+      securityContext:
+        fsGroup: 999
       containers:
       - name: mysql
         image: mysql:8.0
