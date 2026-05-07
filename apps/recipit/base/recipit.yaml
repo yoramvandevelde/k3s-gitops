@@ -26,6 +26,8 @@ spec:
       labels:
         app: recipit-deploy
     spec:
+      securityContext:
+        fsGroup: 999
       containers:
         - name: recipit
           image: ghcr.io/yoramvandevelde/recipit:11fceef1baab60937a325ec317fc4b2ae9b9ca70
@@ -33,6 +35,8 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
             readOnlyRootFilesystem: true
           resources:
             requests:
@@ -60,6 +64,8 @@ spec:
               mountPath: /srv/data
             - name: recipit-tmp
               mountPath: /tmp
+            - name: gunicorn-tmp
+              mountPath: /app/.gunicorn
           env:
             - name: DATABASE_PATH
               value: /srv/data/recepten.db
@@ -93,6 +99,8 @@ spec:
           persistentVolumeClaim:
             claimName: recipit-pvc
         - name: recipit-tmp
+          emptyDir: {}
+        - name: gunicorn-tmp
           emptyDir: {}
 ---
 apiVersion: v1
