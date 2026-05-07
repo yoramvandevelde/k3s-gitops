@@ -4,12 +4,11 @@ metadata:
   name: headlamp-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
     - hosts:
         - headlamp.local.sifft.io
-      secretName: headlamp-tls
+      secretName: wildcard-local-sifft-io-tls
   rules:
     - host: headlamp.local.sifft.io
       http:
