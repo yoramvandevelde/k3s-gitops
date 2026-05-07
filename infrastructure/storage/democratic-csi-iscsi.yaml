@@ -28,8 +28,8 @@ spec:
             image:
               registry: ghcr.io/democratic-csi/democratic-csi
               tag: v1.9.3
-            iscsiDirHostPath: /usr/local/etc/iscsi
-            iscsiDirHostPathType: Directory
+            iscsiDirHostPath: /etc/iscsi
+            iscsiDirHostPathType: "DirectoryOrCreate"
         driver:
           existingConfigSecret: democratic-csi-iscsi-config
           config:
