@@ -24,6 +24,8 @@ spec:
       labels:
         app: wordpress
     spec:
+      securityContext:
+        fsGroup: 33
       containers:
         - name: wordpress
           image: ghcr.io/yoramvandevelde/wordpress-redis:1.0.1
