@@ -36,8 +36,8 @@ config/           # Public sealed secrets cert and encrypted master key
 
 All workloads are hardened and comply with the following Kyverno policies:
 
-- `disallow-latest-tag` — image tags must be pinned (Audit)
-- `require-resource-requests-limits` — all containers must define CPU/memory requests and limits (Enforce; exceptions: infra namespaces + `cilium-spire`)
+- `disallow-latest-tag` — image tags must be pinned (Enforce)
+- `require-resource-requests-limits` — all containers must define CPU/memory requests and limits (Enforce; exceptions: infra namespaces + `cilium-spire` + `sealed-secrets`)
 - `block-privileged-containers` — privileged containers are blocked (Enforce; exceptions: Cilium, democratic-csi node drivers, `kube-proxy`)
 - `require-non-root` — containers must run with `runAsNonRoot: true` (Enforce; exceptions: `kube-system`, `storage`, `metallb-system`, `cilium-spire`)
 - `require-readonly-rootfs` — containers must set `readOnlyRootFilesystem: true` (Enforce; exceptions: `ingress-nginx`, `kube-system`, `storage`, `metallb-system`, `cilium-spire`)
