@@ -1,4 +1,5 @@
 resources:
+  - namespace.yaml
   - recipit.yaml
   - ingress.yaml
   - sealed-secret.yaml
