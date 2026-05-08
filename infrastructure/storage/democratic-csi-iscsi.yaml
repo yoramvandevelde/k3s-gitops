@@ -63,3 +63,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    - group: snapshot.storage.k8s.io
+      kind: VolumeSnapshotClass
+      jqPathExpressions:
+        - .metadata.annotations | select(. == null)

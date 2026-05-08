@@ -7,7 +7,6 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-
   sources:
     - repoURL: code.forgejo.org/forgejo-helm
       chart: forgejo
@@ -15,15 +14,12 @@ spec:
       helm:
         valueFiles:
           - $values/apps/forgejo/values-dev.yaml
-
     - repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
       targetRevision: HEAD
       ref: values
-
   destination:
     name: in-cluster
     namespace: forgejo-dev
-
   syncPolicy:
     automated:
       prune: true
@@ -31,3 +27,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /status/terminatingReplicas
