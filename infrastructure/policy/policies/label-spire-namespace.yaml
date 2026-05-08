@@ -1,0 +1,20 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: label-spire-namespace
+spec:
+  rules:
+    - name: add-pod-security-privileged
+      match:
+        any:
+          - resources:
+              kinds:
+                - Namespace
+              names:
+                - cilium-spire
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            labels:
+              pod-security.kubernetes.io/enforce: privileged
+              pod-security.kubernetes.io/enforce-version: latest
