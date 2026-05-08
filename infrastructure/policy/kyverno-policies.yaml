@@ -14,6 +14,11 @@ spec:
   destination:
     name: in-cluster
     namespace: kyverno
+  ignoreDifferences:
+    - group: kyverno.io
+      kind: ClusterPolicy
+      jsonPointers:
+        - /status
   syncPolicy:
     automated:
       prune: true
