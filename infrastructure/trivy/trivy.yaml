@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: trivy-operator
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://aquasecurity.github.io/helm-charts/
+    chart: trivy-operator
+    targetRevision: 0.24.1
+    helm:
+      values: |
+        trivy:
+          ignoreUnfixed: true
+        operator:
+          scanJobTimeout: 5m
+        serviceMonitor:
+          enabled: true
+          labels:
+            release: kube-prometheus-stack
+  destination:
+    name: in-cluster
+    namespace: trivy-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vpa
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.fairwinds.com/stable
+    chart: vpa
+    targetRevision: 4.4.6
+    helm:
+      values: |
+        # Only the recommender is needed; Goldilocks reads its suggestions.
+        # Admission controller and updater are disabled to prevent VPA from
+        # automatically mutating pod resource requests.
+        admissionController:
+          enabled: false
+        updater:
+          enabled: false
+        recommender:
+          enabled: true
+  destination:
+    name: in-cluster
+    namespace: vpa
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

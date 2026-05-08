@@ -31,6 +31,9 @@ spec:
                 - cilium-spire
                 - tetragon
                 - coturn
+                - vpa
+                - goldilocks
+                - trivy-system
       validate:
         allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."

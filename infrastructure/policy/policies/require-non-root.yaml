@@ -34,6 +34,9 @@ spec:
                 - cilium-spire
                 - tetragon
                 - coturn
+                - vpa
+                - goldilocks
+                - trivy-system
 
       validate:
         allowExistingViolations: false
