@@ -7,3 +7,5 @@ data:
     [global]
     # Setting "*" in the contains allowlist allows all domains for URL previews
     url_preview_domain_contains_allowlist = ["*"]
+    turn_uris = ["turn:turn.sifft.io:3478?transport=udp", "turn:turn.sifft.io:3478?transport=tcp"]
+    turn_ttl = 86400

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coturn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coturn
+  template:
+    metadata:
+      labels:
+        app: coturn
+    spec:
+      # hostNetwork binds coturn directly to the node's network stack so relay
+      # ports (49152-49200 UDP) are reachable without a full Service port listing.
+      # Note which node the pod lands on: kubectl get pod -n coturn -o wide
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: coturn
+          image: coturn/coturn:4.6.2
+          args: ["-c", "/etc/coturn/turnserver.conf", "--external-ip", "$(COTURN_EXTERNAL_IP)"]
+          env:
+            - name: COTURN_EXTERNAL_IP
+              valueFrom:
+                secretKeyRef:
+                  name: coturn-secret
+                  key: external-ip
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - name: turn-udp
+              containerPort: 3478
+              protocol: UDP
+            - name: turn-tcp
+              containerPort: 3478
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: coturn-config
+              mountPath: /etc/coturn/turnserver.conf
+              subPath: turnserver.conf
+              readOnly: true
+            - name: coturn-secret
+              mountPath: /run/secrets/coturn
+              readOnly: true
+      volumes:
+        - name: coturn-config
+          configMap:
+            name: coturn-config
+        - name: coturn-secret
+          secret:
+            secretName: coturn-secret

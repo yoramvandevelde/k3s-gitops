@@ -33,6 +33,7 @@ spec:
                 - metallb-system
                 - cilium-spire
                 - tetragon
+                - coturn
 
       validate:
         allowExistingViolations: false

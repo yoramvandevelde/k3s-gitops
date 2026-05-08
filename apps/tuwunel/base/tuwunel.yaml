@@ -85,6 +85,11 @@ spec:
             # Point to the TOML config file for array-type options (e.g. allowlists)
             - name: CONDUWUIT_CONFIG
               value: /etc/tuwunel/tuwunel.toml
+            - name: CONDUWUIT_TURN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tuwunel-turn-secret
+                  key: turn_secret
           livenessProbe:
             httpGet:
               path: /_matrix/client/versions
