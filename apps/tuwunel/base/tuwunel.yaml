@@ -82,9 +82,6 @@ spec:
             # Allow unauthenticated media access for Element Web compatibility
             - name: CONDUWUIT_ALLOW_LEGACY_MEDIA
               value: "true"
-            # Enable URL previews for link unfurling in clients
-            - name: CONDUWUIT_URL_PREVIEW_ENABLED
-              value: "true"
             # Point to the TOML config file for array-type options (e.g. allowlists)
             - name: CONDUWUIT_CONFIG
               value: /etc/tuwunel/tuwunel.toml
