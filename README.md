@@ -42,7 +42,9 @@ All workloads are hardened and comply with the following Kyverno policies:
 - `require-non-root` — containers must run with `runAsNonRoot: true` (Enforce; exceptions: `kube-system`, `storage`, `metallb-system`, `cilium-spire`)
 - `require-readonly-rootfs` — containers must set `readOnlyRootFilesystem: true` (Enforce; exceptions: `ingress-nginx`, `kube-system`, `storage`, `metallb-system`, `cilium-spire`)
 
-All application namespaces have CiliumNetworkPolicy with default-deny and explicit allow rules per workload.
+All application namespaces have CiliumNetworkPolicy with default-deny, explicit allow rules per workload, and `authentication: mode: required` on all ingress-nginx connections (verified via `Auth: SPIRE` in Hubble). Internal pod-to-pod connections (e.g. wordpress → mysql/redis) are also mTLS-authenticated.
+
+Infrastructure namespaces (kube-system, argocd, monitoring, storage, kyverno, etc.) are intentionally excluded from mTLS requirements. If SPIRE has any issue and mTLS blocks coredns, Cilium itself, or ArgoCD, the cluster becomes unreachable or unrecoverable — a fragility that isn't worth the security gain in this context.
 
 ## Secrets
 

@@ -6,13 +6,15 @@ Things to explore next. Ordered roughly by how self-contained they are, not by p
 
 ## Cilium Service Mesh — mTLS
 
-Envoy proxy (sidecarless) and SPIRE are deployed and running. The foundation for mTLS is in place.
+Envoy proxy (sidecarless) and SPIRE are deployed and running. mTLS is active on all application namespaces.
 
 - ~~Enable Cilium Envoy proxy~~ ✓
 - ~~Deploy SPIRE (certificate authority + node agents)~~ ✓
-- Configure mTLS per namespace via `CiliumNetworkPolicy` with authentication requirements
-- Verify in Hubble that connections show as mTLS-authenticated
+- ~~Configure mTLS per namespace via `CiliumNetworkPolicy` with authentication requirements~~ ✓
+- ~~Verify in Hubble that connections show as mTLS-authenticated~~ ✓ (`Auth: SPIRE` visible on every ingress-nginx → app flow)
 - Explore traffic splitting via `CiliumEnvoyConfig`
+
+mTLS is applied to all app namespaces (recipit, wordpress, forgejo, headlamp, tuwunel, test-dev). Infrastructure namespaces (kube-system, argocd, monitoring, storage, etc.) are intentionally excluded: if SPIRE has an issue and mTLS blocks coredns, cilium, or ArgoCD, the cluster becomes unreachable or unrecoverable. The security value of mTLS is in authenticating application traffic — that part is done.
 
 **Why:** No Istio complexity, no sidecars, and the CNI is already running. This is what eBPF-based networking actually looks like in practice.
 
