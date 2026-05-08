@@ -40,9 +40,35 @@ spec:
                 server:
                   dataStorage:
                     storageClass: iscsi
+        prometheus:
+          enabled: true
+          serviceMonitor:
+            enabled: true
+            labels:
+              release: kube-prometheus-stack
+        operator:
+          prometheus:
+            enabled: true
+            serviceMonitor:
+              enabled: true
+              labels:
+                release: kube-prometheus-stack
         hubble:
           relay:
             enabled: true
+          metrics:
+            enableOpenMetrics: true
+            enabled:
+              - dns
+              - drop:sourceContext=namespace;destinationContext=namespace
+              - tcp
+              - flow:sourceContext=namespace;destinationContext=namespace
+              - port-distribution
+              - icmp
+            serviceMonitor:
+              enabled: true
+              labels:
+                release: kube-prometheus-stack
           ui:
             enabled: true
             ingress:
