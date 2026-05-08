@@ -20,19 +20,6 @@ mTLS is applied to all app namespaces (recipit, wordpress, forgejo, headlamp, tu
 
 ---
 
-## External Secrets Operator
-
-Sealed Secrets works, but secrets still live in Git (encrypted). External Secrets Operator flips the model: secrets live in a real secret store and are synced into Kubernetes at runtime. Nothing secret ever touches the repo.
-
-- Deploy [External Secrets Operator](https://external-secrets.io)
-- Set up a backend — HashiCorp Vault is the most educational, but a simple option is running [Infisical](https://infisical.com) or using an existing cloud secret manager
-- Migrate one app (Recipit or Forgejo) off Sealed Secrets as a proof of concept
-- Compare the operational model: rotation, auditing, access control vs. the Sealed Secrets approach
-
-**Why:** Different philosophy entirely. Understanding both models is valuable for real-world work.
-
----
-
 ## Tetragon — eBPF Security Observability
 
 Also from Cilium. Tetragon hooks into the Linux kernel via eBPF and gives you real-time visibility into what containers are actually doing: syscalls, process executions, network connections, file access — at the kernel level, not the application level.
