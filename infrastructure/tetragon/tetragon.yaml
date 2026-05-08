@@ -19,6 +19,13 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          prometheus:
+            enabled: true
+            port: 2112
+            serviceMonitor:
+              enabled: true
+              labelsOverride:
+                release: kube-prometheus-stack
         tetragonOperator:
           resources:
             requests:
@@ -27,6 +34,13 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
+          prometheus:
+            enabled: true
+            port: 2113
+            serviceMonitor:
+              enabled: true
+              labelsOverride:
+                release: kube-prometheus-stack
   destination:
     name: in-cluster
     namespace: tetragon

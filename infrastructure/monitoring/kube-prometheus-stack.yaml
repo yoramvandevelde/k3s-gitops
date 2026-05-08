@@ -46,6 +46,9 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           sidecar:
+            dashboards:
+              enabled: true
+              searchNamespace: ALL
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true

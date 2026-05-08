@@ -1,0 +1,206 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-tetragon
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  tetragon.json: |
+    {
+      "title": "Tetragon",
+      "uid": "tetragon-security",
+      "schemaVersion": 38,
+      "version": 1,
+      "refresh": "10s",
+      "time": { "from": "now-1h", "to": "now" },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Events/s from kernel",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+          "targets": [
+            {
+              "expr": "sum(rate(tetragon_ringbuf_perf_event_received_total[2m]))",
+              "legendFormat": "received"
+            },
+            {
+              "expr": "sum(rate(tetragon_ringbuf_perf_event_lost_total[2m]))",
+              "legendFormat": "lost"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "custom": { "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "lost" },
+                "properties": [
+                  { "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": 2,
+          "title": "Lost Events (backpressure)",
+          "type": "stat",
+          "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+          "targets": [
+            {
+              "expr": "sum(increase(tetragon_ringbuf_perf_event_lost_total[1h]))",
+              "legendFormat": ""
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 100 }
+                ]
+              },
+              "mappings": [{ "type": "value", "options": { "0": { "text": "0", "color": "green" } } }]
+            }
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" }
+        },
+        {
+          "id": 3,
+          "title": "Policy Enforcement Actions",
+          "type": "stat",
+          "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+          "targets": [
+            {
+              "expr": "sum by (operation) (increase(tetragon_policy_enforcement_total[1h]))",
+              "legendFormat": "{{operation}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": { "unit": "short" },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Drop" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Allow" },
+                "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }]
+              }
+            ]
+          },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "orientation": "horizontal" }
+        },
+        {
+          "id": 4,
+          "title": "Policy Drops over time",
+          "type": "timeseries",
+          "gridPos": { "x": 12, "y": 4, "w": 12, "h": 4 },
+          "targets": [
+            {
+              "expr": "sum by (namespace, binary) (rate(tetragon_policy_enforcement_total{operation=\"Drop\"}[2m]))",
+              "legendFormat": "{{namespace}} / {{binary}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "color": { "mode": "fixed", "fixedColor": "red" },
+              "custom": { "lineWidth": 2 }
+            }
+          }
+        },
+        {
+          "id": 5,
+          "title": "API Events/s by type",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+          "targets": [
+            {
+              "expr": "sum by (api_event) (rate(tetragon_events_total[2m]))",
+              "legendFormat": "{{api_event}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "custom": { "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            }
+          }
+        },
+        {
+          "id": 6,
+          "title": "Handler latency p99 by event type",
+          "type": "timeseries",
+          "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.99, sum by (api_event, le) (rate(tetragon_handler_latency_seconds_bucket[2m])))",
+              "legendFormat": "{{api_event}} p99"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "custom": { "lineWidth": 2 },
+              "color": { "mode": "palette-classic" }
+            }
+          }
+        },
+        {
+          "id": 7,
+          "title": "Errors by type",
+          "type": "timeseries",
+          "gridPos": { "x": 0, "y": 16, "w": 12, "h": 6 },
+          "targets": [
+            {
+              "expr": "sum by (type) (rate(tetragon_errors_total[2m]))",
+              "legendFormat": "{{type}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps",
+              "custom": { "lineWidth": 2 },
+              "color": { "mode": "fixed", "fixedColor": "orange" }
+            }
+          }
+        },
+        {
+          "id": 8,
+          "title": "Policy enforcement by namespace (1h)",
+          "type": "bargauge",
+          "gridPos": { "x": 12, "y": 16, "w": 12, "h": 6 },
+          "targets": [
+            {
+              "expr": "sum by (namespace) (increase(tetragon_policy_enforcement_total[1h]))",
+              "legendFormat": "{{namespace}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short",
+              "color": { "mode": "palette-classic" },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [{ "color": "blue", "value": null }]
+              }
+            }
+          },
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": { "calcs": ["lastNotNull"] },
+            "displayMode": "gradient"
+          }
+        }
+      ]
+    }
