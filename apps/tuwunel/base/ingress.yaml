@@ -13,7 +13,7 @@ spec:
         - matrix.sifft.io
       secretName: tuwunel-sifft-io-tls
   rules:
-    - host: matrix.local.sifft.io
+    - host: matrix.sifft.io
       http:
         paths:
           - path: /
