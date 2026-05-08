@@ -72,3 +72,5 @@ spec:
         - .spec.volumeClaimTemplates[].metadata.creationTimestamp | select(. == null)
         - .spec.volumeClaimTemplates[].status
         - .spec.volumeClaimTemplates[].spec.volumeMode
+        - .spec.volumeClaimTemplates[].apiVersion
+        - .spec.volumeClaimTemplates[].kind
