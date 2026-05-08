@@ -4,7 +4,7 @@ metadata:
   name: require-readonly-rootfs
 
 spec:
-  validationFailureAction: Audit
+  validationFailureAction: Enforce
   background: true
   admission: true
 
@@ -28,6 +28,7 @@ spec:
                 - kube-system
                 - storage
                 - metallb-system
+                - cilium-spire
       validate:
         allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."
