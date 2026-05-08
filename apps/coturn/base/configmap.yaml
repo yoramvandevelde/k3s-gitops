@@ -10,7 +10,7 @@ data:
     use-auth-secret
     static-auth-secret-file=/run/secrets/coturn/turn-secret
     min-port=49152
-    max-port=49200
+    max-port=49161
     no-cli
     no-multicast-peers
     # Block relay to RFC-1918 ranges to prevent SSRF into the homelab

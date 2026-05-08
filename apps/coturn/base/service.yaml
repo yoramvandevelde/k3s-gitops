@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: coturn-svc
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 10.10.99.81
+spec:
+  type: LoadBalancer
+  selector:
+    app: coturn
+  ports:
+    - name: turn-udp
+      port: 3478
+      targetPort: 3478
+      protocol: UDP
+    - name: turn-tcp
+      port: 3478
+      targetPort: 3478
+      protocol: TCP
+    - name: relay-0
+      port: 49152
+      targetPort: 49152
+      protocol: UDP
+    - name: relay-1
+      port: 49153
+      targetPort: 49153
+      protocol: UDP
+    - name: relay-2
+      port: 49154
+      targetPort: 49154
+      protocol: UDP
+    - name: relay-3
+      port: 49155
+      targetPort: 49155
+      protocol: UDP
+    - name: relay-4
+      port: 49156
+      targetPort: 49156
+      protocol: UDP
+    - name: relay-5
+      port: 49157
+      targetPort: 49157
+      protocol: UDP
+    - name: relay-6
+      port: 49158
+      targetPort: 49158
+      protocol: UDP
+    - name: relay-7
+      port: 49159
+      targetPort: 49159
+      protocol: UDP
+    - name: relay-8
+      port: 49160
+      targetPort: 49160
+      protocol: UDP
+    - name: relay-9
+      port: 49161
+      targetPort: 49161
+      protocol: UDP
