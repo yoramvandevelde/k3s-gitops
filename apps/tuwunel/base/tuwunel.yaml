@@ -85,13 +85,9 @@ spec:
             # Enable URL previews for link unfurling in clients
             - name: CONDUWUIT_URL_PREVIEW_ENABLED
               value: "true"
-            # Allow all domains for URL previews; restrict if needed
-            - name: CONDUWUIT_URL_PREVIEW_DOMAIN_CONTAINS_ALLOWLIST
-              value: '[]'
-            - name: CONDUWUIT_URL_PREVIEW_DOMAIN_EXPLICIT_ALLOWLIST
-              value: '[]'
-            - name: CONDUWUIT_URL_PREVIEW_DOMAIN_EXPLICIT_DENYLIST
-              value: '[]'
+            # Point to the TOML config file for array-type options (e.g. allowlists)
+            - name: CONDUWUIT_CONFIG
+              value: /etc/tuwunel/tuwunel.toml
           livenessProbe:
             httpGet:
               path: /_matrix/client/versions
@@ -111,12 +107,18 @@ spec:
             # Tuwunel needs a writable /tmp at runtime
             - name: tmp
               mountPath: /tmp
+            - name: tuwunel-config
+              mountPath: /etc/tuwunel
+              readOnly: true
       volumes:
         - name: tuwunel-data
           persistentVolumeClaim:
             claimName: tuwunel-pvc
         - name: tmp
           emptyDir: {}
+        - name: tuwunel-config
+          configMap:
+            name: tuwunel-config
 ---
 apiVersion: v1
 kind: Service

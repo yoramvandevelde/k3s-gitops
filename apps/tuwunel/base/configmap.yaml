@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tuwunel-config
+data:
+  tuwunel.toml: |
+    [global]
+    # Empty allowlists mean all domains are allowed for URL previews
+    url_preview_domain_contains_allowlist = []
+    url_preview_domain_explicit_allowlist = []
+    url_preview_url_contains_allowlist = []
