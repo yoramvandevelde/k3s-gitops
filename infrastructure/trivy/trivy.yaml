@@ -29,6 +29,7 @@ spec:
               memory: 500Mi
         operator:
           scanJobTimeout: 5m
+          concurrentScanJobsLimit: 2
         serviceMonitor:
           enabled: true
           labels:
