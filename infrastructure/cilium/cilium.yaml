@@ -31,6 +31,12 @@ spec:
           hostRoot: /sys/fs/cgroup
         envoy:
           enabled: true
+        authentication:
+          mutual:
+            spire:
+              enabled: true
+              install:
+                enabled: true
         hubble:
           relay:
             enabled: true
