@@ -5,13 +5,12 @@ metadata:
   namespace: argocd
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   ingressClassName: nginx
   tls:
   - hosts:
     - argocd.sifft.io
-    secretName: argocd-sifft-io-tls
+    secretName: wildcard-sifft-io-tls
   rules:
   - host: argocd.sifft.io
     http:

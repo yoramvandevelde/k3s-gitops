@@ -5,6 +5,13 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:
+  tls:
+    - hosts:
+        - recipit.local.sifft.io
+      secretName: wildcard-local-sifft-io-tls
+    - hosts:
+        - recipit.sifft.io
+      secretName: wildcard-sifft-io-tls
   rules:
   - host: recipit.local.sifft.io
     http:
