@@ -9,6 +9,17 @@ spec:
     repoURL: https://stakater.github.io/stakater-charts
     chart: reloader
     targetRevision: 1.0.115
+    helm:
+      values: |
+        reloader:
+          deployment:
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
   destination:
     name: in-cluster
     namespace: reloader

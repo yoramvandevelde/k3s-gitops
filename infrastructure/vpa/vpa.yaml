@@ -20,6 +20,13 @@ spec:
           enabled: false
         recommender:
           enabled: true
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
   destination:
     name: in-cluster
     namespace: vpa

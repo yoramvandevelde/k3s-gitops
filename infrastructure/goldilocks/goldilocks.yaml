@@ -11,8 +11,23 @@ spec:
     targetRevision: 8.0.2
     helm:
       values: |
+        controller:
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
         dashboard:
           enabled: true
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
           ingress:
             enabled: true
             ingressClassName: nginx

@@ -11,8 +11,23 @@ spec:
     targetRevision: 0.24.1
     helm:
       values: |
+        operator:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
         trivy:
           ignoreUnfixed: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
         operator:
           scanJobTimeout: 5m
         serviceMonitor:
