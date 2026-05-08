@@ -65,6 +65,10 @@ spec:
       - ServerSideApply=true
       - RespectIgnoreDifferences=true
   ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /status/terminatingReplicas
     - group: snapshot.storage.k8s.io
       kind: VolumeSnapshotClass
       jqPathExpressions:
