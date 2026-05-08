@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tuwunel-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: iscsi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tuwunel
+spec:
+  # RocksDB does not support multiple writers; always keep replicas at 1
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: tuwunel
+  template:
+    metadata:
+      labels:
+        app: tuwunel
+    spec:
+      securityContext:
+        # tuwunel binary runs as a non-root user; fsGroup ensures the
+        # mounted PVC is writable by the container process
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: tuwunel
+          # Pin to a specific release tag; never use :latest in production
+          image: ghcr.io/matrix-construct/tuwunel:v1.5.1
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          ports:
+            - name: http
+              containerPort: 6167
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+          env:
+            - name: CONDUWUIT_SERVER_NAME
+              value: "matrix.sifft.io"
+            - name: CONDUWUIT_DATABASE_PATH
+              value: /var/lib/tuwunel
+            - name: CONDUWUIT_PORT
+              value: "6167"
+            - name: CONDUWUIT_ADDRESS
+              value: "0.0.0.0"
+            # Disable federation for now; set to true to enable later
+            - name: CONDUWUIT_ALLOW_FEDERATION
+              value: "false"
+            # Require a registration token; token is injected from sealed secret
+            - name: CONDUWUIT_ALLOW_REGISTRATION
+              value: "true"
+            - name: CONDUWUIT_REGISTRATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: tuwunel-secret
+                  key: registration_token
+            - name: CONDUWUIT_MAX_REQUEST_SIZE
+              value: "20000000"
+            - name: CONDUWUIT_ALLOW_CHECK_FOR_UPDATES
+              value: "false"
+          livenessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /_matrix/client/versions
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: tuwunel-data
+              mountPath: /var/lib/tuwunel
+            # Tuwunel needs a writable /tmp at runtime
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tuwunel-data
+          persistentVolumeClaim:
+            claimName: tuwunel-pvc
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tuwunel-svc
+spec:
+  selector:
+    app: tuwunel
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 6167

@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tuwunel-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    path: apps/tuwunel/overlays/dev
+    repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
+    targetRevision: HEAD
+  destination:
+    namespace: tuwunel-dev
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

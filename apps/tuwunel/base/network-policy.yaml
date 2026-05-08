@@ -1,0 +1,50 @@
+# Default deny all ingress and egress for the entire namespace
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tuwunel
+spec:
+  endpointSelector:
+    matchLabels:
+      app: tuwunel
+  ingress:
+    # Allow traffic from ingress-nginx only
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ingress-nginx
+            io.kubernetes.pod.namespace: ingress-nginx
+      toPorts:
+        - ports:
+            - port: "6167"
+              protocol: TCP
+  egress:
+    # kube-dns for hostname resolution
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # Allow outbound HTTPS for potential future federation or OIDC
+    # Remove this rule if you want to fully isolate the server
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
