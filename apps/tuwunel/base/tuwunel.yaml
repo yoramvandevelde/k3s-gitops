@@ -67,7 +67,7 @@ spec:
             # Disable federation for now; set to true to enable later
             - name: CONDUWUIT_ALLOW_FEDERATION
               value: "false"
-            # Require a registration token; token is injected from sealed secret
+            # Registration requires a token; only people with the token can create an account
             - name: CONDUWUIT_ALLOW_REGISTRATION
               value: "true"
             - name: CONDUWUIT_REGISTRATION_TOKEN
@@ -79,6 +79,9 @@ spec:
               value: "20000000"
             - name: CONDUWUIT_ALLOW_CHECK_FOR_UPDATES
               value: "false"
+            # Allow unauthenticated media access for Element Web compatibility
+            - name: CONDUWUIT_ALLOW_LEGACY_MEDIA
+              value: "true"
           livenessProbe:
             httpGet:
               path: /_matrix/client/versions
