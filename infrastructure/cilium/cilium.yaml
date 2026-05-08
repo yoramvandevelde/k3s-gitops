@@ -37,6 +37,9 @@ spec:
               enabled: true
               install:
                 enabled: true
+                server:
+                  dataStorage:
+                    storageClass: iscsi
         hubble:
           relay:
             enabled: true
