@@ -11,7 +11,7 @@ spec:
       reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
       reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "argocd,kube-system,headlamp,wordpress-dev,wordpress-prod,forgejo-dev,recipit-dev"
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-staging
     kind: ClusterIssuer
   dnsNames:
     - "*.local.sifft.io"
