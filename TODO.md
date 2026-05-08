@@ -30,4 +30,31 @@ Also from Cilium. Tetragon hooks into the Linux kernel via eBPF and gives you re
 - Build a web UI for Tetragon events (JSON stream from `kubectl exec … tetra getevents`)
 - Optional: hook Tetragon alerts into Alertmanager
 
+---
+
+## Matrix / Tuwunel — WebRTC calls
+
+- ~~Deploy coturn TURN server for voice/video calls~~ ✓ (MetalLB IP `10.10.99.81`, relay ports `49152-49161`)
+- ~~Configure Tuwunel with TURN URIs and shared HMAC secret~~ ✓
+- Re-enable federation when ready (`CONDUWUIT_ALLOW_FEDERATION=true`)
+
+---
+
+## Certificates
+
+- ~~Switch `*.local.sifft.io` issuer from letsencrypt-staging to letsencrypt-prod~~ ✓
+- ~~Add `*.sifft.io` wildcard cert and propagate via Reflector~~ ✓ (manually imported, valid until 2026-07-21)
+- Re-add `Certificate` resource for `*.sifft.io` once Let's Encrypt status page shows no issues — must be done before 2026-07-21
+
+---
+
+## Observability
+
+- ~~Deploy kube-prometheus-stack~~ ✓
+- ~~Configure Grafana dashboards via GitOps (ArgoCD, Cilium, ingress-nginx, Tetragon)~~ ✓
+- ~~Deploy metrics-server~~ ✓
+- ~~Deploy VPA recommender + Goldilocks~~ ✓
+- ~~Deploy Trivy Operator for vulnerability scanning~~ ✓
+- ~~Deploy Reloader~~ ✓
+
 **Why:** This is genuinely eye-opening. Most people have never seen what a container does below the container runtime. eBPF makes the invisible visible.

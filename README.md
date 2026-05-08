@@ -13,17 +13,23 @@ This repo manages the full cluster state via ArgoCD using an app-of-apps pattern
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) — encrypted secrets safe to store in Git
 - [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) — monitoring (Prometheus + Grafana + Alertmanager)
 - [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) — volume snapshots
-- [Kyverno](https://kyverno.io) — policy engine, all policies in Enforce mode (see below)
+- [Kyverno](https://kyverno.io) — policy engine, all policies in Enforce mode (see below); policies managed as a separate ArgoCD Application (`kyverno-policies`) with retry to handle CRD ordering on bootstrap
 - [Tetragon](https://tetragon.io) — eBPF security observability (kernel-level process, file, and network event tracing via `TracingPolicy`)
 - [Argo Rollouts](https://argoproj.github.io/rollouts/) — progressive delivery (canary deployments)
 - [chaoskube](https://github.com/linki/chaoskube) — chaos engineering, random pod termination every 10 minutes
+- [metrics-server](https://github.com/kubernetes-sigs/metrics-server) — resource usage metrics API (`kubectl top`); configured with `--kubelet-insecure-tls` for Talos self-signed kubelet certs
+- [VPA](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) — recommender only; provides resource usage recommendations without auto-mutating pods
+- [Goldilocks](https://goldilocks.docs.fairwinds.com) — dashboard for VPA recommendations at `goldilocks.local.sifft.io`; namespaces opt in via `goldilocks.fairwinds.com/enabled: "true"` label
+- [Reloader](https://github.com/stakater/Reloader) — automatically restarts pods when their ConfigMap or Secret changes
+- [Trivy Operator](https://aquasecurity.github.io/trivy-operator) — continuous vulnerability scanning of running container images; results available via `kubectl get vulnerabilityreports -A`
 
 **Apps**
 - [Forgejo](https://forgejo.org) — self-hosted Git (SQLite, iSCSI storage, SSH via MetalLB)
 - [Headlamp](https://headlamp.dev) — Kubernetes web UI
 - [Wordpress](https://wordpress.org) — dev and prod environments (MySQL + Redis + custom image with Redis plugin)
 - [Recipit](https://github.com/yoramvandevelde/recipit) — personal recipe manager with Home Assistant integration; full CI/CD pipeline that automatically updates the image tag in this repo on push
-- [Tuwunel](https://github.com/matrix-construct/tuwunel) — Matrix homeserver (Rust-based, RocksDB, no federation)
+- [Tuwunel](https://github.com/matrix-construct/tuwunel) — Matrix homeserver (Rust-based, RocksDB, no federation); WebRTC calls via coturn TURN server
+- [coturn](https://github.com/coturn/coturn) — TURN/STUN server for Matrix WebRTC calls; MetalLB IP `10.10.99.81`, relay ports `49152-49161 UDP`
 
 ## Structure
 ```bash
@@ -40,8 +46,8 @@ All workloads are hardened and comply with the following Kyverno policies:
 - `disallow-latest-tag` — image tags must be pinned (Enforce)
 - `require-resource-requests-limits` — all containers must define CPU/memory requests and limits (Enforce; exceptions: infra namespaces + `cilium-spire` + `sealed-secrets`)
 - `block-privileged-containers` — privileged containers are blocked (Enforce; exceptions: Cilium, democratic-csi node drivers, `kube-proxy`)
-- `require-non-root` — containers must run with `runAsNonRoot: true` (Enforce; exceptions: `kube-system`, `storage`, `metallb-system`, `cilium-spire`)
-- `require-readonly-rootfs` — containers must set `readOnlyRootFilesystem: true` (Enforce; exceptions: `ingress-nginx`, `kube-system`, `storage`, `metallb-system`, `cilium-spire`)
+- `require-non-root` — containers must run with `runAsNonRoot: true` (Enforce; exceptions: `kube-system`, `storage`, `metallb-system`, `cilium-spire`, `tetragon`, `coturn`, `vpa`, `goldilocks`, `trivy-system`)
+- `require-readonly-rootfs` — containers must set `readOnlyRootFilesystem: true` (Enforce; exceptions: `ingress-nginx`, `kube-system`, `storage`, `metallb-system`, `cilium-spire`, `tetragon`, `coturn`, `vpa`, `goldilocks`, `trivy-system`)
 
 All application namespaces have CiliumNetworkPolicy with default-deny, explicit allow rules per workload, and `authentication: mode: required` on all ingress-nginx connections (verified via `Auth: SPIRE` in Hubble). Internal pod-to-pod connections (e.g. wordpress → mysql/redis) are also mTLS-authenticated.
 
