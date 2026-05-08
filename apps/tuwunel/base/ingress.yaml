@@ -4,6 +4,7 @@ metadata:
   name: tuwunel-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     # Matrix clients send large payloads (e.g. file uploads)
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
 spec:
