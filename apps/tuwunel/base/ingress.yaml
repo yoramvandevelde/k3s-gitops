@@ -10,7 +10,7 @@ spec:
   tls:
     - hosts:
         - matrix.sifft.io
-      secretName: wildcard-sifft-io-tls
+      secretName: tuwunel-sifft-io-tls
   rules:
     - host: matrix.sifft.io
       http:
