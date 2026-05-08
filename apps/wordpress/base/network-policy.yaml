@@ -25,6 +25,8 @@ spec:
         - matchLabels:
             app.kubernetes.io/name: ingress-nginx
             io.kubernetes.pod.namespace: ingress-nginx
+      authentication:
+        mode: "required"
       toPorts:
         - ports:
             - port: "80"
@@ -34,6 +36,8 @@ spec:
     - toEndpoints:
         - matchLabels:
             app: mysql
+      authentication:
+        mode: "required"
       toPorts:
         - ports:
             - port: "3306"
@@ -42,6 +46,8 @@ spec:
     - toEndpoints:
         - matchLabels:
             app: redis
+      authentication:
+        mode: "required"
       toPorts:
         - ports:
             - port: "6379"
@@ -78,6 +84,8 @@ spec:
     - fromEndpoints:
         - matchLabels:
             app: wordpress
+      authentication:
+        mode: "required"
       toPorts:
         - ports:
             - port: "3306"
@@ -108,6 +116,8 @@ spec:
     - fromEndpoints:
         - matchLabels:
             app: wordpress
+      authentication:
+        mode: "required"
       toPorts:
         - ports:
             - port: "6379"
