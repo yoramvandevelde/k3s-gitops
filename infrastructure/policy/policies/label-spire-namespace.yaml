@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: label-spire-namespace
+  name: label-privileged-namespaces
 spec:
   admission: true
   background: true
@@ -15,6 +15,7 @@ spec:
                 - Namespace
               names:
                 - cilium-spire
+                - tetragon
       mutate:
         patchStrategicMerge:
           metadata:

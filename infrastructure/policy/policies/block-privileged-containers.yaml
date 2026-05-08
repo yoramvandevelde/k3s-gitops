@@ -37,6 +37,9 @@ spec:
               names:
                 - iscsi-democratic-csi-node
                 - nfs-democratic-csi-node
+          - resources:
+              namespaces:
+                - tetragon
 
       validate:
         allowExistingViolations: false

@@ -32,6 +32,7 @@ spec:
                 - storage
                 - metallb-system
                 - cilium-spire
+                - tetragon
 
       validate:
         allowExistingViolations: false

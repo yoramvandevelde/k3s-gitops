@@ -29,6 +29,7 @@ spec:
                 - storage
                 - metallb-system
                 - cilium-spire
+                - tetragon
       validate:
         allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."
