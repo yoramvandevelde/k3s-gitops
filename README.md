@@ -13,7 +13,8 @@ This repo manages the full cluster state via ArgoCD using an app-of-apps pattern
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) — encrypted secrets safe to store in Git
 - [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) — monitoring (Prometheus + Grafana + Alertmanager)
 - [snapshot-controller](https://github.com/kubernetes-csi/external-snapshotter) — volume snapshots
-- [Kyverno](https://kyverno.io) — policy engine, all policies in Audit mode (see below)
+- [Kyverno](https://kyverno.io) — policy engine, all policies in Enforce mode (see below)
+- [Tetragon](https://tetragon.io) — eBPF security observability (kernel-level process, file, and network event tracing via `TracingPolicy`)
 - [Argo Rollouts](https://argoproj.github.io/rollouts/) — progressive delivery (canary deployments)
 - [chaoskube](https://github.com/linki/chaoskube) — chaos engineering, random pod termination every 10 minutes
 
@@ -45,6 +46,19 @@ All workloads are hardened and comply with the following Kyverno policies:
 All application namespaces have CiliumNetworkPolicy with default-deny, explicit allow rules per workload, and `authentication: mode: required` on all ingress-nginx connections (verified via `Auth: SPIRE` in Hubble). Internal pod-to-pod connections (e.g. wordpress → mysql/redis) are also mTLS-authenticated.
 
 Infrastructure namespaces (kube-system, argocd, monitoring, storage, kyverno, etc.) are intentionally excluded from mTLS requirements. If SPIRE has any issue and mTLS blocks coredns, Cilium itself, or ArgoCD, the cluster becomes unreachable or unrecoverable — a fragility that isn't worth the security gain in this context.
+
+### Tetragon — kernel-level observability
+
+Tetragon runs as a privileged DaemonSet and hooks into the Linux kernel via eBPF. Three `TracingPolicy` resources are active:
+
+- `shell-exec-detector` — cluster-wide, fires on `execve` when the target binary is any shell (`/bin/sh`, `/bin/bash`, `/bin/dash`). Detects shell spawning in any pod.
+- `sensitive-file-access` — scoped to `recipit-dev` (`TracingPolicyNamespaced`), fires on `openat` for paths under `/etc/shadow`, `/etc/passwd`, `/etc/ssh`, `/proc/1`, and `/var/run/secrets`. Detects credential and token access attempts.
+- `tcp-connect-tracker` — cluster-wide, hooks the `tcp_connect` kernel function and captures full socket metadata (src/dst IP + port) for every outbound TCP connection.
+
+Events are consumed live via:
+```bash
+kubectl exec -n tetragon daemonset/tetragon -c tetragon -- tetra getevents -o compact
+```
 
 ## Secrets
 

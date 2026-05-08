@@ -24,9 +24,10 @@ mTLS is applied to all app namespaces (recipit, wordpress, forgejo, headlamp, tu
 
 Also from Cilium. Tetragon hooks into the Linux kernel via eBPF and gives you real-time visibility into what containers are actually doing: syscalls, process executions, network connections, file access — at the kernel level, not the application level.
 
-- Deploy [Tetragon](https://tetragon.io) into the cluster
-- Write a `TracingPolicy` to observe a specific app (e.g. what files Recipit touches, what processes Wordpress spawns)
+- ~~Deploy [Tetragon](https://tetragon.io) into the cluster~~ ✓
+- ~~Write `TracingPolicy` to observe specific apps~~ ✓ (three policies: shell exec detection cluster-wide, sensitive file access in recipit-dev, TCP connect tracking cluster-wide)
 - Watch what chaoskube actually does when it kills a pod at the syscall level
+- Build a web UI for Tetragon events (JSON stream from `kubectl exec … tetra getevents`)
 - Optional: hook Tetragon alerts into Alertmanager
 
 **Why:** This is genuinely eye-opening. Most people have never seen what a container does below the container runtime. eBPF makes the invisible visible.
