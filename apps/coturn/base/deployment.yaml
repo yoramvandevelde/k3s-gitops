@@ -24,8 +24,6 @@ spec:
                   key: external-ip
           securityContext:
             allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
           ports:
             - name: turn-udp
               containerPort: 3478
