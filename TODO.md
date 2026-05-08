@@ -33,17 +33,6 @@ Sealed Secrets works, but secrets still live in Git (encrypted). External Secret
 
 ---
 
-## TrueNAS via OpenTofu
-
-Proxmox VMs and Talos bootstrap are fully automated (`tofu apply` builds the full stack). The remaining manual gap is TrueNAS — datasets, shares, and storage pools are still configured by hand.
-
-- Add TrueNAS to the OpenTofu setup using the [TrueNAS provider](https://registry.terraform.io/providers/dariusbakunas/truenas)
-- Manage iSCSI and NFS targets as code alongside the rest of the infrastructure
-
-**Why:** Closes the last manual step in the stack.
-
----
-
 ## Tetragon — eBPF Security Observability
 
 Also from Cilium. Tetragon hooks into the Linux kernel via eBPF and gives you real-time visibility into what containers are actually doing: syscalls, process executions, network connections, file access — at the kernel level, not the application level.
