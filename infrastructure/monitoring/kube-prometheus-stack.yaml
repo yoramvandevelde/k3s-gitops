@@ -97,6 +97,8 @@ spec:
       kind: StatefulSet
       jqPathExpressions:
         - .spec.volumeClaimTemplates[].metadata.creationTimestamp | select(. == null)
+        - .spec.volumeClaimTemplates[].status
+        - .spec.volumeClaimTemplates[].spec.volumeMode
     - group: apps
       kind: StatefulSet
       jsonPointers:

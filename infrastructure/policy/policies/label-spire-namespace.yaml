@@ -3,8 +3,11 @@ kind: ClusterPolicy
 metadata:
   name: label-spire-namespace
 spec:
+  admission: true
+  background: true
   rules:
     - name: add-pod-security-privileged
+      skipBackgroundRequests: false
       match:
         any:
           - resources:
