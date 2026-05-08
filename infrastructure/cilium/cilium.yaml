@@ -29,6 +29,8 @@ spec:
           autoMount:
             enabled: false
           hostRoot: /sys/fs/cgroup
+        envoy:
+          enabled: true
         hubble:
           relay:
             enabled: true

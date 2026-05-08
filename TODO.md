@@ -30,16 +30,14 @@ Sealed Secrets works, but secrets still live in Git (encrypted). External Secret
 
 ---
 
-## OpenTofu for Infrastructure
+## TrueNAS via OpenTofu
 
-The cluster state is in Git, but everything underneath it — the VM(s), TrueNAS datasets, network config — is still manual. OpenTofu (open-source Terraform fork) can manage that layer too.
+Proxmox VMs and Talos bootstrap are fully automated (`tofu apply` builds the full stack). The remaining manual gap is TrueNAS — datasets, shares, and storage pools are still configured by hand.
 
-- [TrueNAS provider](https://registry.terraform.io/providers/dariusbakunas/truenas) for datasets, shares, and storage pools
-- Proxmox/Harvester/whatever hypervisor you run has providers too
-- k3s can be provisioned via cloud-init or an existing module
-- Goal: `tofu apply` builds the full stack from scratch, then `kubectl apply -f bootstrap/root.yaml` does the rest
+- Add TrueNAS to the OpenTofu setup using the [TrueNAS provider](https://registry.terraform.io/providers/dariusbakunas/truenas)
+- Manage iSCSI and NFS targets as code alongside the rest of the infrastructure
 
-**Why:** This closes the last manual gap. Real infrastructure-as-code end to end.
+**Why:** Closes the last manual step in the stack.
 
 ---
 
