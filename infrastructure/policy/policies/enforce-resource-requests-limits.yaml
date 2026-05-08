@@ -39,6 +39,7 @@ spec:
                 - chaoskube
                 - cilium-spire
                 - sealed-secrets
+                - tetragon
 
       validate:
         allowExistingViolations: false
