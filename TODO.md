@@ -4,16 +4,17 @@ Things to explore next. Ordered roughly by how self-contained they are, not by p
 
 ---
 
-## Cilium Service Mesh
+## Cilium Service Mesh — mTLS
 
-Cilium is already running but only used for network policies. Cilium can act as a full service mesh without sidecars — mTLS between services, traffic splitting, and L7 observability, all powered by eBPF instead of injected proxies.
+Envoy proxy (sidecarless) and SPIRE are deployed and running. The foundation for mTLS is in place.
 
-- Enable Cilium's service mesh mode (`kubeProxyReplacement`, `envoy` sidecarless mode)
-- Configure mTLS between app namespaces
-- Explore traffic splitting via `CiliumEnvoyConfig` or `CiliumClusterwideEnvoyConfig`
-- Observe it all in Hubble
+- ~~Enable Cilium Envoy proxy~~ ✓
+- ~~Deploy SPIRE (certificate authority + node agents)~~ ✓
+- Configure mTLS per namespace via `CiliumNetworkPolicy` with authentication requirements
+- Verify in Hubble that connections show as mTLS-authenticated
+- Explore traffic splitting via `CiliumEnvoyConfig`
 
-**Why:** No Istio complexity, no sidecars, and you already have the CNI. This is what eBPF-based networking actually looks like in practice.
+**Why:** No Istio complexity, no sidecars, and the CNI is already running. This is what eBPF-based networking actually looks like in practice.
 
 ---
 
