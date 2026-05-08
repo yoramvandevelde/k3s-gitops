@@ -96,5 +96,4 @@ spec:
     - group: apps
       kind: StatefulSet
       jqPathExpressions:
-        - .spec.volumeClaimTemplates[].metadata.creationTimestamp
-
+        - .spec.volumeClaimTemplates[].metadata.creationTimestamp | select(. == null)
