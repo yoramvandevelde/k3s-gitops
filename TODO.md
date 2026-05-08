@@ -44,7 +44,7 @@ Also from Cilium. Tetragon hooks into the Linux kernel via eBPF and gives you re
 
 - ~~Switch `*.local.sifft.io` issuer from letsencrypt-staging to letsencrypt-prod~~ ✓
 - ~~Add `*.sifft.io` wildcard cert and propagate via Reflector~~ ✓ (manually imported, valid until 2026-07-21)
-- Re-add `Certificate` resource for `*.sifft.io` once Let's Encrypt status page shows no issues — must be done before 2026-07-21
+- ~~Re-add `Certificate` resource for `*.sifft.io`~~ ✓ (2026-05-09, cert-manager auto-renews from here)
 
 ---
 
