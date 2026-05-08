@@ -11,6 +11,7 @@ spec:
 
   rules:
     - name: require-run-as-non-root
+      skipBackgroundRequests: false
 
       match:
         any:
@@ -32,6 +33,7 @@ spec:
                 - metallb-system
 
       validate:
+        allowExistingViolations: false
         message: "Containers must run with runAsNonRoot=true."
 
         foreach:

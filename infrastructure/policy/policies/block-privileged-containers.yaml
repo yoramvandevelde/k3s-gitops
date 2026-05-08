@@ -38,6 +38,7 @@ spec:
                 - nfs-democratic-csi-node
 
       validate:
+        allowExistingViolations: false
         message: "Privileged containers are not allowed."
         foreach:
           - list: "request.object.spec.template.spec.containers"

@@ -62,3 +62,11 @@ spec:
       kind: Deployment
       jsonPointers:
         - /status/terminatingReplicas
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/persistentVolumeClaimRetentionPolicy
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec.volumeClaimTemplates[].metadata.creationTimestamp | select(. == null)

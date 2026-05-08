@@ -39,6 +39,7 @@ spec:
                 - chaoskube
 
       validate:
+        allowExistingViolations: false
         message: "Containers must define cpu/memory requests and limits."
 
         foreach:

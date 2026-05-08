@@ -97,3 +97,7 @@ spec:
       kind: StatefulSet
       jqPathExpressions:
         - .spec.volumeClaimTemplates[].metadata.creationTimestamp | select(. == null)
+    - group: apps
+      kind: StatefulSet
+      jsonPointers:
+        - /spec/persistentVolumeClaimRetentionPolicy
