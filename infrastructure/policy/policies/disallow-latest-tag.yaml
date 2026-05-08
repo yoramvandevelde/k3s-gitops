@@ -7,11 +7,11 @@ spec:
   admission: true
   background: true
   emitWarning: false
-  validationFailureAction: Audit
+  validationFailureAction: Enforce
 
   rules:
     - name: require-image-tag
-      skipBackgroundRequests: true
+      skipBackgroundRequests: false
 
       match:
         any:
@@ -20,7 +20,7 @@ spec:
                 - Pod
 
       validate:
-        allowExistingViolations: true
+        allowExistingViolations: false
         message: "Images with :latest are not allowed.."
 
         pattern:

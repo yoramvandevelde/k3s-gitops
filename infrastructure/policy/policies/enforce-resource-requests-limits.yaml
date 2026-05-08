@@ -38,6 +38,7 @@ spec:
                 - headlamp
                 - chaoskube
                 - cilium-spire
+                - sealed-secrets
 
       validate:
         allowExistingViolations: false
