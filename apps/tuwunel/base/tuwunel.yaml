@@ -85,6 +85,13 @@ spec:
             # Enable URL previews for link unfurling in clients
             - name: CONDUWUIT_URL_PREVIEW_ENABLED
               value: "true"
+            # Allow all domains for URL previews; restrict if needed
+            - name: CONDUWUIT_URL_PREVIEW_DOMAIN_CONTAINS_ALLOWLIST
+              value: '[]'
+            - name: CONDUWUIT_URL_PREVIEW_DOMAIN_EXPLICIT_ALLOWLIST
+              value: '[]'
+            - name: CONDUWUIT_URL_PREVIEW_DOMAIN_EXPLICIT_DENYLIST
+              value: '[]'
           livenessProbe:
             httpGet:
               path: /_matrix/client/versions
