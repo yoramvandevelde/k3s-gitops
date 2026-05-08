@@ -13,6 +13,10 @@ spec:
       values: |
         reloader:
           deployment:
+            containerSecurityContext:
+              readOnlyRootFilesystem: true
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
             resources:
               requests:
                 cpu: 10m
