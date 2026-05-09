@@ -20,8 +20,6 @@ spec:
     - repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
       targetRevision: HEAD
       path: apps/immich
-      directory:
-        exclude: "values*.yaml"
   destination:
     name: in-cluster
     namespace: immich
