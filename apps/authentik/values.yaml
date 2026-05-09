@@ -31,10 +31,10 @@ server:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     hosts:
-      - host: authentik.local.sifft.io
-        paths:
-          - path: /
-            pathType: Prefix
+      - authentik.local.sifft.io
+    paths:
+      - /
+    pathType: Prefix
     tls:
       - hosts:
           - authentik.local.sifft.io
