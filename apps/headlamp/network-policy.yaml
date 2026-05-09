@@ -44,3 +44,10 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
+    # OIDC discovery via ingress
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
