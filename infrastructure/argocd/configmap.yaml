@@ -5,3 +5,12 @@ metadata:
   namespace: argocd
 data:
   url: https://argocd.local.sifft.io
+  oidc.config: |
+    name: Authentik
+    issuer: https://authentik.local.sifft.io/application/o/argocd/
+    clientID: ND1eY0Pu5TrVhGbMXW9s18my9ba0xtAe0Ar2rLcJ
+    clientSecret: $oidc.authentik.clientSecret
+    requestedScopes:
+      - openid
+      - profile
+      - email
