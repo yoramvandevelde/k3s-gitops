@@ -1,0 +1,181 @@
+# Default deny all ingress and egress for the entire namespace
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+# Immich: ingress from ingress-nginx
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-server
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: immich-server
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ingress-nginx
+            io.kubernetes.pod.namespace: ingress-nginx
+      authentication:
+        mode: "required"
+      toPorts:
+        - ports:
+            - port: "3001"
+              protocol: TCP
+  egress:
+    # PostgreSQL
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: postgresql
+      authentication:
+        mode: "required"
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    # Redis
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: redis
+      authentication:
+        mode: "required"
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    # Machine learning
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: immich-machine-learning
+      authentication:
+        mode: "required"
+      toPorts:
+        - ports:
+            - port: "3003"
+              protocol: TCP
+    # kube-dns
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # Outbound HTTPS for ML models, geocoding, etc.
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+# PostgreSQL: ingress only from immich-server
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: postgresql
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: immich-server
+      authentication:
+        mode: "required"
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+---
+# Redis: ingress only from immich-server
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: redis
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: immich-server
+      authentication:
+        mode: "required"
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+---
+# Machine learning: ingress only from immich-server
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-machine-learning
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: immich-machine-learning
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: immich-server
+      authentication:
+        mode: "required"
+      toPorts:
+        - ports:
+            - port: "3003"
+              protocol: TCP
+  egress:
+    # Outbound for downloading ML models
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
