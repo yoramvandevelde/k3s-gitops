@@ -9,7 +9,7 @@ spec:
     annotations:
       reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
       reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
-      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "argocd,kube-system,headlamp,wordpress-dev,wordpress-prod,forgejo-dev,recipit-dev"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "argocd,kube-system,headlamp,wordpress-dev,wordpress-prod,forgejo-dev,recipit-dev,authentik"
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
