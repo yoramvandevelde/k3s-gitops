@@ -20,12 +20,14 @@ This repo manages the full cluster state via ArgoCD using an app-of-apps pattern
 - [metrics-server](https://github.com/kubernetes-sigs/metrics-server) — resource usage metrics API (`kubectl top`); configured with `--kubelet-insecure-tls` for Talos self-signed kubelet certs
 - [VPA](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) — recommender only; provides resource usage recommendations without auto-mutating pods
 - [Goldilocks](https://goldilocks.docs.fairwinds.com) — dashboard for VPA recommendations at `goldilocks.local.sifft.io`; namespaces opt in via `goldilocks.fairwinds.com/enabled: "true"` label
+- [Reflector](https://github.com/emberstack/kubernetes-reflector) — mirrors Secrets and ConfigMaps across namespaces; used to propagate the wildcard TLS secret to app namespaces
 - [Reloader](https://github.com/stakater/Reloader) — automatically restarts pods when their ConfigMap or Secret changes
 - [Trivy Operator](https://aquasecurity.github.io/trivy-operator) — continuous vulnerability scanning of running container images; results available via `kubectl get vulnerabilityreports -A`
 
 **Apps**
 - [Forgejo](https://forgejo.org) — self-hosted Git (SQLite, iSCSI storage, SSH via MetalLB)
-- [Headlamp](https://headlamp.dev) — Kubernetes web UI
+- [Authentik](https://goauthentik.io) — identity provider (OIDC); SSO for cluster tools. Headlamp authenticates via kube-apiserver OIDC integration — JWTs issued by Authentik are validated directly by the Kubernetes API (not by the app itself)
+- [Headlamp](https://headlamp.dev) — Kubernetes web UI with OIDC login via Authentik (`akadmin` → `cluster-admin` via ClusterRoleBinding)
 - [Wordpress](https://wordpress.org) — dev and prod environments (MySQL + Redis + custom image with Redis plugin)
 - [Recipit](https://github.com/yoramvandevelde/recipit) — personal recipe manager with Home Assistant integration; full CI/CD pipeline that automatically updates the image tag in this repo on push
 - [Tuwunel](https://github.com/matrix-construct/tuwunel) — Matrix homeserver (Rust-based, RocksDB, no federation); WebRTC calls via coturn TURN server
