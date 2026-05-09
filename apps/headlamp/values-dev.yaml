@@ -3,6 +3,13 @@ securityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
 
+config:
+  oidc:
+    clientID: uqbnzm0ySGEylwHMXe80bMC0RxufnzVaOz62WPiG
+    clientSecretName: headlamp-oidc-secret
+    issuerURL: https://authentik.local.sifft.io/application/o/headlamp/
+    scopes: openid,profile,email
+
 volumes:
   - name: headlamp-config
     emptyDir: {}
