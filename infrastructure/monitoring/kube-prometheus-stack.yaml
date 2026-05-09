@@ -18,6 +18,34 @@ spec:
             existingSecret: grafana-admin-secret
             userKey: admin-user
             passwordKey: admin-password
+          envValueFrom:
+            GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET:
+              secretKeyRef:
+                name: grafana-oidc-secret
+                key: client_secret
+          grafana.ini:
+            server:
+              root_url: https://grafana.local.sifft.io
+            auth.generic_oauth:
+              enabled: true
+              name: Authentik
+              allow_sign_up: true
+              client_id: MEK6kjWYdWSThyKYDAGxecCyA6gZ9vYUxiOMkEsS
+              client_secret: "${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}"
+              scopes: openid profile email
+              auth_url: https://authentik.local.sifft.io/application/o/authorize/
+              token_url: https://authentik.local.sifft.io/application/o/token/
+              api_url: https://authentik.local.sifft.io/application/o/userinfo/
+              role_attribute_path: "contains(groups[*], 'grafana-admins') && 'Admin' || 'Viewer'"
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts:
+              - grafana.local.sifft.io
+            tls:
+              - secretName: wildcard-local-sifft-io-tls
+                hosts:
+                  - grafana.local.sifft.io
           persistence:
             enabled: true
             type: sts
