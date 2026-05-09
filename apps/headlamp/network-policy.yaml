@@ -44,9 +44,9 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
-    # OIDC discovery via ingress
+    # OIDC discovery via ingress-nginx (Cilium DNATs to pod IPs = cluster entity)
     - toEntities:
-        - world
+        - cluster
       toPorts:
         - ports:
             - port: "443"
