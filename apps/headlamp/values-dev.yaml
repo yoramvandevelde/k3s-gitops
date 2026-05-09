@@ -5,9 +5,9 @@ securityContext:
 
 config:
   oidc:
-    secret:
-      create: false
-      name: oidc
+    externalSecret:
+      enabled: true
+      name: headlamp-oidc
 
 volumes:
   - name: headlamp-config
