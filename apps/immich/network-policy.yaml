@@ -10,7 +10,7 @@ spec:
   egress:
     - {}
 ---
-# Immich: ingress from ingress-nginx
+# Immich server: ingress from ingress-nginx
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -18,7 +18,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: immich-server
+      app.kubernetes.io/name: server
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -28,10 +28,9 @@ spec:
         mode: "required"
       toPorts:
         - ports:
-            - port: "3001"
+            - port: "2283"
               protocol: TCP
   egress:
-    # PostgreSQL
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: postgresql
@@ -41,27 +40,24 @@ spec:
         - ports:
             - port: "5432"
               protocol: TCP
-    # Redis
     - toEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: redis
+            app.kubernetes.io/name: valkey
       authentication:
         mode: "required"
       toPorts:
         - ports:
             - port: "6379"
               protocol: TCP
-    # Machine learning
     - toEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: immich-machine-learning
+            app.kubernetes.io/name: machine-learning
       authentication:
         mode: "required"
       toPorts:
         - ports:
             - port: "3003"
               protocol: TCP
-    # kube-dns
     - toEndpoints:
         - matchLabels:
             k8s-app: kube-dns
@@ -72,7 +68,6 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
-    # Outbound HTTPS for ML models, geocoding, etc.
     - toEntities:
         - world
       toPorts:
@@ -92,7 +87,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: immich-server
+            app.kubernetes.io/name: server
       authentication:
         mode: "required"
       toPorts:
@@ -111,19 +106,19 @@ spec:
             - port: "53"
               protocol: TCP
 ---
-# Redis: ingress only from immich-server
+# Valkey: ingress only from immich-server
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: redis
+  name: valkey
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: redis
+      app.kubernetes.io/name: valkey
   ingress:
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: immich-server
+            app.kubernetes.io/name: server
       authentication:
         mode: "required"
       toPorts:
@@ -146,15 +141,15 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: immich-machine-learning
+  name: machine-learning
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: immich-machine-learning
+      app.kubernetes.io/name: machine-learning
   ingress:
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: immich-server
+            app.kubernetes.io/name: server
       authentication:
         mode: "required"
       toPorts:
@@ -162,7 +157,6 @@ spec:
             - port: "3003"
               protocol: TCP
   egress:
-    # Outbound for downloading ML models
     - toEntities:
         - world
       toPorts:

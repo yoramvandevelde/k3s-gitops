@@ -4,3 +4,4 @@ resources:
   - namespace.yaml
   - network-policy.yaml
   - sealed-secret.yaml
+  - library-pvc.yaml

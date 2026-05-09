@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: https://immich-app.github.io/immich-charts
       chart: immich
-      targetRevision: 0.9.6
+      targetRevision: 0.11.1
       helm:
         valueFiles:
           - $values/apps/immich/values-dev.yaml
@@ -21,7 +21,7 @@ spec:
       targetRevision: HEAD
       path: apps/immich
       directory:
-        exclude: "values.yaml"
+        exclude: "values*.yaml"
   destination:
     name: in-cluster
     namespace: immich

@@ -35,6 +35,7 @@ spec:
                 - goldilocks
                 - trivy-system
                 - authentik
+                - immich
       validate:
         allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."

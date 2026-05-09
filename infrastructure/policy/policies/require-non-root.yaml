@@ -38,6 +38,7 @@ spec:
                 - goldilocks
                 - trivy-system
                 - authentik
+                - immich
 
       validate:
         allowExistingViolations: false

@@ -1,178 +1,98 @@
-# Immich Helm values
-# Based on https://github.com/immich-app/immich-charts
-
-image:
-  repository: ghcr.io/immich-app/immich-server
-  tag: v1.125.2
-  pullPolicy: IfNotPresent
+# Top-level env vars apply to the immich server
+controllers:
+  main:
+    containers:
+      main:
+        env:
+          DB_HOSTNAME: immich-postgresql
+          DB_PORT: "5432"
+          DB_DATABASE_NAME: immich
+          DB_USERNAME: immich
+          DB_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: immich-secret
+                key: db-password
+          REDIS_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: immich-secret
+                key: redis-password
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
 
 immich:
-  metrics:
-    enabled: false
-  
   persistence:
     library:
-      enabled: true
-      size: 100Gi
-      storageClass: iscsi
-      accessMode: ReadWriteOnce
-    upload:
-      enabled: true
-      size: 100Gi
-      storageClass: iscsi
-      accessMode: ReadWriteOnce
-    profile:
-      enabled: true
-      size: 10Gi
-      storageClass: iscsi
-      accessMode: ReadWriteOnce
-    thumbs:
-      enabled: true
-      size: 50Gi
-      storageClass: iscsi
-      accessMode: ReadWriteOnce
-    video:
-      enabled: true
-      size: 50Gi
-      storageClass: iscsi
-      accessMode: ReadWriteOnce
+      existingClaim: immich-library
 
 server:
-  resources:
-    requests:
-      cpu: 500m
-      memory: 1Gi
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-  
   ingress:
-    enabled: true
-    ingressClassName: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: "500m"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-      nginx.ingress.kubernetes.io/client-max-body-size: "500m"
-    hosts:
-      - host: immich.local.sifft.io
-        paths:
-          - path: /
-            pathType: Prefix
-    tls:
-      - hosts:
-          - immich.local.sifft.io
-        secretName: wildcard-local-sifft-io-tls
-  
-  env:
-    DB_HOSTNAME: immich-postgresql
-    DB_PORT: "5432"
-    DB_DATABASE_NAME: immich
-    DB_USERNAME: immich
-    REDIS_HOSTNAME: immich-redis-master
-    REDIS_PORT: "6379"
-    REDIS_DBINDEX: "0"
-    IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
-    IMMICH_WEB_URL: http://immich-web:3000
-    IMMICH_SERVER_URL: http://immich-server:3001
-    LOG_LEVEL: info
+    main:
+      enabled: true
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-body-size: "500m"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+      hosts:
+        - host: immich.local.sifft.io
+          paths:
+            - path: /
+              service:
+                identifier: main
+      tls:
+        - hosts:
+            - immich.local.sifft.io
+          secretName: wildcard-local-sifft-io-tls
 
-microservices:
+valkey:
   enabled: true
-  resources:
-    requests:
-      cpu: 250m
-      memory: 512Mi
-    limits:
-      cpu: 1000m
-      memory: 2Gi
+  controllers:
+    main:
+      containers:
+        main:
+          args: ["--requirepass", "$(VALKEY_PASSWORD)"]
+          env:
+            VALKEY_PASSWORD:
+              valueFrom:
+                secretKeyRef:
+                  name: immich-secret
+                  key: redis-password
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+  persistence:
+    data:
+      type: persistentVolumeClaim
+      size: 1Gi
+      storageClass: iscsi
+      accessMode: ReadWriteOnce
 
 machine-learning:
   enabled: true
-  resources:
-    requests:
-      cpu: 200m
-      memory: 2Gi
-    limits:
-      cpu: 1000m
-      memory: 4Gi
-  
-  env:
-    TRANSFORMERS_CACHE: /cache
-    HUGGINGFACE_HUB_CACHE: /cache
-    # Optional: use CPU only, no GPU
-    CUDA_VISIBLE_DEVICES: ""
-
+  controllers:
+    main:
+      containers:
+        main:
+          resources:
+            requests:
+              cpu: 200m
+              memory: 2Gi
+            limits:
+              cpu: 1000m
+              memory: 4Gi
   persistence:
     cache:
-      enabled: true
+      type: persistentVolumeClaim
       size: 10Gi
       storageClass: iscsi
-      mountPath: /cache
-
-web:
-  enabled: true
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
-  
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: "500m"
-    hosts:
-      - host: immich.local.sifft.io
-        paths:
-          - path: /
-            pathType: Prefix
-    tls:
-      - hosts:
-          - immich.local.sifft.io
-        secretName: wildcard-local-sifft-io-tls
-
-postgresql:
-  enabled: true
-  global:
-    postgresql:
-      auth:
-        username: immich
-        database: immich
-        existingSecret: immich-secret
-        secretKeys:
-          userPasswordKey: db-password
-          postgresPasswordKey: db-postgres-password
-          replicationPasswordKey: db-replication-password
-  primary:
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 1Gi
-    persistence:
-      enabled: true
-      storageClass: iscsi
-      size: 20Gi
-
-redis:
-  enabled: true
-  architecture: standalone
-  auth:
-    existingSecret: immich-secret
-    existingSecretPasswordKey: redis-password
-  master:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 128Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
-    persistence:
-      enabled: false
+      accessMode: ReadWriteOnce
