@@ -5,10 +5,9 @@ securityContext:
 
 config:
   oidc:
-    clientID: uqbnzm0ySGEylwHMXe80bMC0RxufnzVaOz62WPiG
-    clientSecretName: headlamp-oidc-secret
-    issuerURL: https://authentik.local.sifft.io/application/o/headlamp/
-    scopes: openid,profile,email
+    secret:
+      create: false
+      name: oidc
 
 volumes:
   - name: headlamp-config
