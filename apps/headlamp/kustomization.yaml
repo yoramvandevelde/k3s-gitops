@@ -4,3 +4,4 @@ resources:
   - ingress.yaml
   - rbac.yaml
   - network-policy.yaml
+  - sealed-secret-oidc.yaml
