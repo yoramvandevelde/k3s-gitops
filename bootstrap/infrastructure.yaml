@@ -11,8 +11,8 @@ spec:
     path: infrastructure
     directory:
       recurse: true
-      include: "{*/*.yaml,*.yml,*.yaml}"  
-      exclude: "{certmanager/config/*.yaml,networking/*.yml,storage/*.yml,policy/policies/*.yaml}"
+      include: "{*/*.yaml,*.yml,*.yaml}"   
+      exclude: "{disabled/**},{certmanager/config/*.yaml,networking/*.yml,storage/*.yml,policy/policies/*.yaml}"
   destination:
     name: in-cluster
     namespace: argocd
