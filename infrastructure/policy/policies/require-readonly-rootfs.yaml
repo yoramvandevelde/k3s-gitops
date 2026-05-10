@@ -36,6 +36,7 @@ spec:
                 - trivy-system
                 - authentik
                 - immich
+                - jitsi
       validate:
         allowExistingViolations: false
         message: "Containers must set securityContext.readOnlyRootFilesystem to true."
