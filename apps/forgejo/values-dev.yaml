@@ -29,31 +29,10 @@ containerSecurityContext:
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
 
-env:
-  - name: client_id
-    valueFrom:
-      secretKeyRef:
-        name: forgejo-oidc-secret
-        key: client_id
-  - name: client_secret
-    valueFrom:
-      secretKeyRef:
-        name: forgejo-oidc-secret
-        key: client_secret
-
 gitea:
   admin:
     existingSecret: forgejo-admin-secret
     passwordMode: initialOnlyRequireReset
-
-  oauth:
-    - name: authentik
-      provider: openidConnect
-      key: ${client_id}
-      secret: ${client_secret}
-      autoDiscoverUrl: https://authentik.local.sifft.io/application/o/forgejo/.well-known/openid-configuration
-      scopes: "email profile"
-      iconUrl: https://authentik.local.sifft.io/static/dist/assets/icons/icon.png
 
   config:
     server:
