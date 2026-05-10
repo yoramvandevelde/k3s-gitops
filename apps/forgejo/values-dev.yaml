@@ -49,6 +49,9 @@ gitea:
     service:
       DISABLE_REGISTRATION: true
 
+    migrations:
+      ALLOW_LOCALNETWORKS: true
+
 service:
   http:
     type: ClusterIP
