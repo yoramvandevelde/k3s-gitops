@@ -39,7 +39,7 @@ spec:
                 - trivy-system
                 - authentik
                 - immich
-
+                - jitsi
       validate:
         allowExistingViolations: false
         message: "Containers must run with runAsNonRoot=true."
