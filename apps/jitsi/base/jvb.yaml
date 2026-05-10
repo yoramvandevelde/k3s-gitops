@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jvb
+  namespace: jitsi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jvb
+  template:
+    metadata:
+      labels:
+        app: jvb
+    spec:
+      containers:
+        - name: jvb
+          image: jitsi/jvb:stable-10532-1
+          envFrom:
+            - configMapRef:
+                name: jitsi-config
+            - secretRef:
+                name: jitsi-config
+          ports:
+            - containerPort: 10000
+              protocol: UDP  # Media traffic
+            - containerPort: 9090
+              protocol: TCP  # Internal websocket (colibri)
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jvb
+  namespace: jitsi
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: "10.10.99.69"
+spec:
+  type: LoadBalancer
+  selector:
+    app: jvb
+  ports:
+    - name: media
+      port: 10000
+      targetPort: 10000
+      protocol: UDP
+    - name: colibri
+      port: 9090
+      targetPort: 9090
+      protocol: TCP

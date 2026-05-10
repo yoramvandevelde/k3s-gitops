@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jitsi
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/yoramvandevelde/k3s-gitops.git
+    targetRevision: HEAD
+    path: apps/jitsi/overlays/dev
+  destination:
+    name: in-cluster
+    namespace: jitsi
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

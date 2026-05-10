@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prosody
+  namespace: jitsi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prosody
+  template:
+    metadata:
+      labels:
+        app: prosody
+    spec:
+      containers:
+        - name: prosody
+          image: jitsi/prosody:stable-10532-1
+          envFrom:
+            - configMapRef:
+                name: jitsi-config
+            - secretRef:
+                name: jitsi-config
+          ports:
+            - containerPort: 5222  # XMPP client connections
+            - containerPort: 5347  # XMPP component connections (jicofo, jvb)
+            - containerPort: 5280  # XMPP over HTTP (websocket)
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prosody
+  namespace: jitsi
+spec:
+  selector:
+    app: prosody
+  ports:
+    - name: xmpp-client
+      port: 5222
+      targetPort: 5222
+    - name: xmpp-component
+      port: 5347
+      targetPort: 5347
+    - name: xmpp-http
+      port: 5280
+      targetPort: 5280

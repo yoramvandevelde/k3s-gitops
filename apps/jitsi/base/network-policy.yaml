@@ -1,0 +1,146 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: jitsi
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+---
+# Web: ingress from ingress-nginx, egress to prosody and kube-dns
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: web
+  namespace: jitsi
+spec:
+  endpointSelector:
+    matchLabels:
+      app: web
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ingress-nginx
+            io.kubernetes.pod.namespace: ingress-nginx
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: prosody
+            io.kubernetes.pod.namespace: jitsi
+      toPorts:
+        - ports:
+            - port: "5280"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+---
+# Prosody: ingress from web/jicofo/jvb and ingress-nginx, egress to kube-dns
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: prosody
+  namespace: jitsi
+spec:
+  endpointSelector:
+    matchLabels:
+      app: prosody
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: jitsi
+      toPorts:
+        - ports:
+            - port: "5222"
+              protocol: TCP
+            - port: "5347"
+              protocol: TCP
+            - port: "5280"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ingress-nginx
+            io.kubernetes.pod.namespace: ingress-nginx
+      toPorts:
+        - ports:
+            - port: "5280"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+---
+# Jicofo: egress to prosody and jvb, kube-dns
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: jicofo
+  namespace: jitsi
+spec:
+  endpointSelector:
+    matchLabels:
+      app: jicofo
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: prosody
+            io.kubernetes.pod.namespace: jitsi
+      toPorts:
+        - ports:
+            - port: "5222"
+              protocol: TCP
+            - port: "5347"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app: jvb
+            io.kubernetes.pod.namespace: jitsi
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+---
+# JVB: ingress UDP from world, egress to prosody and kube-dns
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: jvb
+  namespace: jitsi
+spec:
+  endpointSelector:
+    matchLabels:
+      app: jvb
+  ingress:
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "10000"
+              protocol: UDP
+    - fromEndpoints:
+        - matchLa
