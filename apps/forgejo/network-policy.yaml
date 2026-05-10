@@ -39,9 +39,18 @@ spec:
             - port: "2222"
               protocol: TCP
   egress:
-    # Mirrors, webhooks, OAuth (HTTPS)
+    # Mirrors, webhooks, OAuth (HTTPS) — external world
     - toEntities:
         - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Authentik via ingress-nginx (Cilium ziet na DNAT cluster-endpoint, niet world)
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: ingress-nginx
+            io.kubernetes.pod.namespace: ingress-nginx
       toPorts:
         - ports:
             - port: "443"
