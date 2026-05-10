@@ -143,4 +143,27 @@ spec:
             - port: "10000"
               protocol: UDP
     - fromEndpoints:
-        - matchLa
+        - matchLabels:
+            app: jicofo
+            io.kubernetes.pod.namespace: jitsi
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: prosody
+            io.kubernetes.pod.namespace: jitsi
+      toPorts:
+        - ports:
+            - port: "5222"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
