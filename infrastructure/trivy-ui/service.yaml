@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trivy-ui
+  namespace: trivy-ui
+spec:
+  selector:
+    app: trivy-ui
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000

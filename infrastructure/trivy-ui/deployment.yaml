@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trivy-ui
+  namespace: trivy-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trivy-ui
+  template:
+    metadata:
+      labels:
+        app: trivy-ui
+    spec:
+      serviceAccountName: trivy-ui
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+        - name: trivy-ui
+          image: ghcr.io/aquasecurity/trivy-operator-dashboard:0.2.1
+          ports:
+            - containerPort: 5000
+              name: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
