@@ -12,7 +12,7 @@ spec:
     directory:
       recurse: true
       include: "{*/*.yaml,*.yml,*.yaml}"   
-      exclude: "{disabled/**,certmanager/config/*.yaml,networking/*.yml,storage/*.yml,policy/policies/*.yaml}"
+      exclude: "{disabled/**,certmanager/config/*.yaml,networking/*.yml,storage/*.yml,policy/policies/*.yaml,*servicemonitor*.yaml,tetragon/policy-*.yaml}"
   destination:
     name: in-cluster
     namespace: argocd
