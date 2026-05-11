@@ -2532,32 +2532,11 @@ data:
             "type": "datasource"
           },
           {
-            "current": {
-              "isNone": true,
-              "selected": false,
-              "text": "None",
-              "value": ""
-            },
-            "datasource": {
-              "type": "prometheus",
-              "uid": "${datasource}"
-            },
-            "definition": "label_values(kube_node_info,cluster)",
-            "hide": 0,
-            "includeAll": false,
-            "multi": false,
+            "hide": 2,
             "name": "cluster",
-            "options": [],
-            "query": {
-              "qryType": 1,
-              "query": "label_values(kube_node_info,cluster)",
-              "refId": "PrometheusVariableQueryEditor-VariableQuery"
-            },
-            "refresh": 1,
-            "regex": "",
+            "query": ".*",
             "skipUrlSync": false,
-            "sort": 1,
-            "type": "query"
+            "type": "constant"
           },
           {
             "allValue": ".*",
