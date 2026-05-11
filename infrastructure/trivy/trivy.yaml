@@ -31,6 +31,8 @@ spec:
           scanJobTimeout: 5m
           concurrentScanJobsLimit: 2
           metricsFindingsEnabled: true
+          metricsImageInfo: true
+          metricsVulnIdEnabled: true
         serviceMonitor:
           enabled: true
           labels:
